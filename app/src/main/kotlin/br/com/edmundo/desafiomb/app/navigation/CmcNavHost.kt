@@ -5,14 +5,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import br.com.edmundo.desafiomb.feature.exchanges.detail.ExchangeDetailScreen
 import br.com.edmundo.desafiomb.feature.exchanges.list.ExchangeListScreen
-import kotlinx.serialization.Serializable
-
-@Serializable
-data object ExchangeListRoute
-
-@Serializable
-data class ExchangeDetailRoute(val exchangeId: Int)
+import br.com.edmundo.desafiomb.feature.exchanges.navigation.ExchangeDetailRoute
+import br.com.edmundo.desafiomb.feature.exchanges.navigation.ExchangeListRoute
 
 @Composable
 fun CmcNavHost(navController: NavHostController = rememberNavController()) {
@@ -21,7 +17,7 @@ fun CmcNavHost(navController: NavHostController = rememberNavController()) {
             ExchangeListScreen(onExchangeClick = { id -> navController.navigate(ExchangeDetailRoute(id)) })
         }
         composable<ExchangeDetailRoute> {
-            PlaceholderScreen(label = "Detalhe (E4)")
+            ExchangeDetailScreen(onBack = navController::navigateUp)
         }
     }
 }

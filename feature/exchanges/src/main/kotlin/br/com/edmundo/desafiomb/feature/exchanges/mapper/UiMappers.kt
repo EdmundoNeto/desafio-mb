@@ -2,11 +2,17 @@ package br.com.edmundo.desafiomb.feature.exchanges.mapper
 
 import br.com.edmundo.desafiomb.core.domain.error.AppError
 import br.com.edmundo.desafiomb.core.domain.model.Exchange
+import br.com.edmundo.desafiomb.core.domain.model.ExchangeAsset
+import br.com.edmundo.desafiomb.core.domain.model.ExchangeDetail
 import br.com.edmundo.desafiomb.core.ui.R
 import br.com.edmundo.desafiomb.core.ui.state.UiError
 import br.com.edmundo.desafiomb.core.ui.text.UiText
 import br.com.edmundo.desafiomb.feature.exchanges.format.DateFormatter
+import br.com.edmundo.desafiomb.feature.exchanges.format.PercentFormatter
+import br.com.edmundo.desafiomb.feature.exchanges.format.PriceFormatter
 import br.com.edmundo.desafiomb.feature.exchanges.format.VolumeFormatter
+import br.com.edmundo.desafiomb.feature.exchanges.model.ExchangeAssetUiModel
+import br.com.edmundo.desafiomb.feature.exchanges.model.ExchangeDetailUiModel
 import br.com.edmundo.desafiomb.feature.exchanges.model.ExchangeUiModel
 import java.util.Locale
 
@@ -16,6 +22,22 @@ fun Exchange.toUiModel(locale: Locale = Locale.getDefault()): ExchangeUiModel = 
     logoUrl = logoUrl,
     volume = VolumeFormatter.format(spotVolumeUsd, locale),
     launchedAt = DateFormatter.format(dateLaunched, locale),
+)
+
+fun ExchangeDetail.toUiModel(locale: Locale = Locale.getDefault()): ExchangeDetailUiModel = ExchangeDetailUiModel(
+    id = id,
+    name = name,
+    logoUrl = logoUrl,
+    description = description,
+    websiteUrl = websiteUrl,
+    makerFee = PercentFormatter.format(makerFee, locale),
+    takerFee = PercentFormatter.format(takerFee, locale),
+    launchedAt = DateFormatter.format(dateLaunched, locale),
+)
+
+fun ExchangeAsset.toUiModel(locale: Locale = Locale.getDefault()): ExchangeAssetUiModel = ExchangeAssetUiModel(
+    currencyName = currencyName,
+    priceUsd = PriceFormatter.format(currencyPriceUsd, locale),
 )
 
 fun AppError.toUiError(): UiError = when (this) {

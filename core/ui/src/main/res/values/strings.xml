@@ -9,4 +9,7 @@
     <string name="error_unknown">Algo deu errado</string>
     <string name="action_retry">Tentar novamente</string>
     <string name="offline_banner_message">Exibindo dados offline</string>
+    <string name="action_show_more">Ver mais</string>
+    <string name="action_show_less">Ver menos</string>
+    <string name="action_back">Voltar</string>
 </resources>

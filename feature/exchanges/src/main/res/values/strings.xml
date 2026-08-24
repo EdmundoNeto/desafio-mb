@@ -4,4 +4,13 @@
     <string name="exchange_list_end_of_list">Fim da lista</string>
     <string name="exchange_list_empty">Nenhuma exchange encontrada</string>
     <string name="exchange_logo_content_description">Logo da %1$s</string>
+    <string name="exchange_detail_title">Detalhe</string>
+    <string name="exchange_detail_visit_website">Visitar site ↗</string>
+    <string name="exchange_detail_maker_fee_label">Maker</string>
+    <string name="exchange_detail_taker_fee_label">Taker</string>
+    <string name="exchange_detail_about_title">Sobre</string>
+    <string name="exchange_detail_assets_title">Moedas (%1$d)</string>
+    <string name="exchange_detail_assets_empty">Esta exchange não possui ativos rastreados</string>
+    <string name="exchange_detail_open_url_error">Não foi possível abrir o link</string>
+    <string name="exchange_detail_launched_at">Desde %1$s</string>
 </resources>

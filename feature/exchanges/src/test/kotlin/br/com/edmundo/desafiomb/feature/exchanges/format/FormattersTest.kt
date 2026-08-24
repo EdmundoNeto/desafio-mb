@@ -48,4 +48,49 @@ class FormattersTest {
     fun `dado nulo, quando formatado como data, entao retorna travessao`() {
         assertEquals("—", DateFormatter.format(null, ptBr))
     }
+
+    @Test
+    fun `dado 0,10242, quando formatado como preco, entao retorna US dolar 0,10242`() {
+        assertEquals("US$ 0,10242", PriceFormatter.format(0.10242, ptBr))
+    }
+
+    @Test
+    fun `dado 0,000012345, quando formatado como preco, entao retorna 5 digitos significativos`() {
+        assertEquals("US$ 0,000012345", PriceFormatter.format(0.000012345, ptBr))
+    }
+
+    @Test
+    fun `dado 3204,1, quando formatado como preco, entao retorna duas casas com separador de milhar`() {
+        assertEquals("US$ 3.204,10", PriceFormatter.format(3204.1, ptBr))
+    }
+
+    @Test
+    fun `dado 1,0, quando formatado como preco, entao retorna US dolar 1,00`() {
+        assertEquals("US$ 1,00", PriceFormatter.format(1.0, ptBr))
+    }
+
+    @Test
+    fun `dado nulo, quando formatado como preco, entao retorna travessao`() {
+        assertEquals("—", PriceFormatter.format(null, ptBr))
+    }
+
+    @Test
+    fun `dado 0,02, quando formatado como percentual, entao retorna 0,02%`() {
+        assertEquals("0,02%", PercentFormatter.format(0.02, ptBr))
+    }
+
+    @Test
+    fun `dado 0,1, quando formatado como percentual, entao retorna 0,1%`() {
+        assertEquals("0,1%", PercentFormatter.format(0.1, ptBr))
+    }
+
+    @Test
+    fun `dado zero, quando formatado como percentual, entao retorna 0%`() {
+        assertEquals("0%", PercentFormatter.format(0.0, ptBr))
+    }
+
+    @Test
+    fun `dado nulo, quando formatado como percentual, entao retorna travessao`() {
+        assertEquals("—", PercentFormatter.format(null, ptBr))
+    }
 }

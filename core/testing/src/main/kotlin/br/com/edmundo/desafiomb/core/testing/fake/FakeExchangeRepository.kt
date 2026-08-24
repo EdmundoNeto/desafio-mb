@@ -13,16 +13,29 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class FakeExchangeRepository : ExchangeRepository {
 
     private val exchangesFlow = MutableStateFlow<List<Exchange>>(emptyList())
+    private val detailFlow = MutableStateFlow<ExchangeDetail?>(null)
+
     var loadPageResult: DomainResult<PageLoad> = DomainResult.success(PageLoad.Fresh(hasMore = false))
     var refreshResult: DomainResult<Unit> = DomainResult.success(Unit)
+    var syncExchangeDetailResult: DomainResult<Unit> = DomainResult.success(Unit)
+    var assetsResult: DomainResult<List<ExchangeAsset>> = DomainResult.success(emptyList())
     var loadPageGate: CompletableDeferred<Unit>? = null
+
     var loadPageCalls: List<Int> = emptyList()
         private set
     var refreshCalls: Int = 0
         private set
+    var syncExchangeDetailCalls: List<Int> = emptyList()
+        private set
+    var getExchangeAssetsCalls: List<Int> = emptyList()
+        private set
 
     fun emit(exchanges: List<Exchange>) {
         exchangesFlow.value = exchanges
+    }
+
+    fun emitDetail(detail: ExchangeDetail?) {
+        detailFlow.value = detail
     }
 
     override fun observeExchanges(): Flow<List<Exchange>> = exchangesFlow
@@ -38,12 +51,15 @@ class FakeExchangeRepository : ExchangeRepository {
         return refreshResult
     }
 
-    override fun observeExchangeDetail(id: Int): Flow<ExchangeDetail?> =
-        throw NotImplementedError("nao utilizado pelos testes de E3")
+    override fun observeExchangeDetail(id: Int): Flow<ExchangeDetail?> = detailFlow
 
-    override suspend fun syncExchangeDetail(id: Int): DomainResult<Unit> =
-        throw NotImplementedError("nao utilizado pelos testes de E3")
+    override suspend fun syncExchangeDetail(id: Int): DomainResult<Unit> {
+        syncExchangeDetailCalls = syncExchangeDetailCalls + id
+        return syncExchangeDetailResult
+    }
 
-    override suspend fun getExchangeAssets(id: Int): DomainResult<List<ExchangeAsset>> =
-        throw NotImplementedError("nao utilizado pelos testes de E3")
+    override suspend fun getExchangeAssets(id: Int): DomainResult<List<ExchangeAsset>> {
+        getExchangeAssetsCalls = getExchangeAssetsCalls + id
+        return assetsResult
+    }
 }

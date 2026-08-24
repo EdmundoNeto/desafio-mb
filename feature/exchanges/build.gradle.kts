@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.koin.androidx.compose.navigation)
 
     testImplementation(project(":core:testing"))
+    testImplementation(libs.robolectric)
 
     androidTestImplementation(project(":core:testing"))
     androidTestImplementation(platform(libs.koin.bom))
