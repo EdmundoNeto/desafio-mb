@@ -1,0 +1,7 @@
+<resources>
+    <string name="exchange_list_title">Exchanges</string>
+    <string name="exchange_list_append_error">Falha ao carregar mais · Tentar novamente</string>
+    <string name="exchange_list_end_of_list">Fim da lista</string>
+    <string name="exchange_list_empty">Nenhuma exchange encontrada</string>
+    <string name="exchange_logo_content_description">Logo da %1$s</string>
+</resources>
