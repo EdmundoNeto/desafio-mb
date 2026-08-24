@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.kover)
 }
 
 val cmcApiKey: String = Properties().apply {
@@ -31,6 +32,25 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "br.com.edmundo.desafiomb.core.data.BuildConfig",
+                    "*_Impl",
+                    "*_Impl\$*",
+                )
+            }
+        }
+        verify {
+            rule {
+                minBound(80)
+            }
+        }
+    }
+}
+
 dependencies {
     implementation(project(":core:domain"))
 
@@ -51,4 +71,6 @@ dependencies {
     testImplementation(project(":core:testing"))
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.room.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.junit)
 }
