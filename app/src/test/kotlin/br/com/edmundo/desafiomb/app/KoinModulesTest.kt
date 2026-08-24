@@ -9,6 +9,7 @@ import br.com.edmundo.desafiomb.core.domain.di.domainModule
 import br.com.edmundo.desafiomb.feature.exchanges.di.exchangesModule
 import org.junit.Test
 import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.dsl.module
 import org.koin.test.verify.verify
 
 class KoinModulesTest {
@@ -16,15 +17,10 @@ class KoinModulesTest {
     @OptIn(KoinExperimentalAPI::class)
     @Test
     fun `dado o grafo completo, quando verificado, entao toda definicao resolve`() {
-        val modules = listOf(
-            appModule,
-            domainModule,
-            networkModule,
-            databaseModule,
-            repositoryModule,
-            exchangesModule,
-        )
+        val combinedGraph = module {
+            includes(appModule, domainModule, networkModule, databaseModule, repositoryModule, exchangesModule)
+        }
 
-        modules.forEach { it.verify(extraTypes = listOf(Context::class)) }
+        combinedGraph.verify(extraTypes = listOf(Context::class))
     }
 }
