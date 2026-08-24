@@ -4,7 +4,6 @@ import android.util.Log
 import br.com.edmundo.desafiomb.app.BuildConfig
 import br.com.edmundo.desafiomb.core.domain.util.Logger
 
-/** Implementacao Android do Logger de dominio (RNF-08). No-op em release. */
 class AndroidLogger : Logger {
 
     override fun d(tag: String, message: String, throwable: Throwable?) {

@@ -5,14 +5,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Teste de arquitetura (RNF-03, spec 2.2): `:feature:*` nao pode declarar dependencia
- * em `:core:data`. O binding ExchangeRepository -> ExchangeRepositoryImpl vive em
- * :core:data/di, e so :app conhece todos os modulos.
- *
- * Le o build script em vez de inspecionar bytecode: a violacao que importa e a
- * declaracao de dependencia, e ela e textual.
- */
 class ModuleDependencyTest {
 
     private val repoRoot: File = generateSequence(File(".").absoluteFile) { it.parentFile }

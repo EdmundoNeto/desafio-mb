@@ -1,8 +1,19 @@
 package br.com.edmundo.desafiomb.core.data.di
 
+import android.content.Context
+import androidx.room.Room
+import br.com.edmundo.desafiomb.core.data.local.CmcDatabase
 import org.koin.dsl.module
 
-/** CmcDatabase e os 4 DAOs (spec 4.1). Preenchido na E2. */
+private const val DATABASE_NAME = "cmc-exchanges.db"
+
 val databaseModule = module {
-    // E2
+    single {
+        Room.databaseBuilder(get<Context>(), CmcDatabase::class.java, DATABASE_NAME).build()
+    }
+    single { get<CmcDatabase>().exchangeIndexDao() }
+    single { get<CmcDatabase>().exchangeDao() }
+    single { get<CmcDatabase>().exchangeDetailDao() }
+    single { get<CmcDatabase>().exchangeAssetDao() }
+    single { get<CmcDatabase>().cacheMetaDao() }
 }

@@ -6,13 +6,9 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.kover)
 }
 
-/**
- * Secrets (ADR-05 / spec 2.3). Le local.properties sem depender de API interna do AGP
- * (`gradleLocalProperties` e `com.android.build.gradle.internal.*`, instavel entre versoes).
- * O build NAO falha com a chave vazia - a ausencia vira AppError.InvalidApiKey em runtime.
- */
 val cmcApiKey: String = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
@@ -36,6 +32,25 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "br.com.edmundo.desafiomb.core.data.BuildConfig",
+                    "*_Impl",
+                    "*_Impl\$*",
+                )
+            }
+        }
+        verify {
+            rule {
+                minBound(80)
+            }
+        }
+    }
+}
+
 dependencies {
     implementation(project(":core:domain"))
 
@@ -56,4 +71,6 @@ dependencies {
     testImplementation(project(":core:testing"))
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.room.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.junit)
 }

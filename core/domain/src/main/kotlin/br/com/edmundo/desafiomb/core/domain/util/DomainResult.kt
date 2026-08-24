@@ -2,13 +2,6 @@ package br.com.edmundo.desafiomb.core.domain.util
 
 import br.com.edmundo.desafiomb.core.domain.error.AppError
 
-/**
- * Either<AppError, T> proprio (SD-02).
- *
- * `kotlin.Result` forcaria o erro a ser `Throwable`, reintroduzindo excecoes como veiculo
- * de erro de negocio - exatamente o que o PRD 5.5 quer evitar. Com este tipo, o `when`
- * sobre [AppError] e exaustivo em compilacao.
- */
 sealed interface DomainResult<out T> {
 
     data class Success<out T>(val value: T) : DomainResult<T>
@@ -19,10 +12,8 @@ sealed interface DomainResult<out T> {
 
     val isFailure: Boolean get() = this is Failure
 
-    /** Valor em caso de sucesso, `null` em caso de falha. */
     fun getOrNull(): T? = (this as? Success)?.value
 
-    /** Erro em caso de falha, `null` em caso de sucesso. */
     fun errorOrNull(): AppError? = (this as? Failure)?.error
 
     companion object {

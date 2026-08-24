@@ -1,5 +1,5 @@
 [versions]
-# --- Build toolchain (E1: validado empiricamente, ver README) ---
+# --- Build toolchain ---
 agp = "8.13.2"
 kotlin = "2.4.10"
 ksp = "2.3.11"
@@ -34,6 +34,7 @@ junit = "4.13.2"
 androidxTestJunit = "1.3.0"
 espresso = "3.7.0"
 turbine = "1.2.1"
+robolectric = "4.16.1"
 
 # --- Qualidade ---
 kover = "0.9.9"
@@ -102,6 +103,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestJunit" }
 androidx-test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

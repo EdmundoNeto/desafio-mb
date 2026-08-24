@@ -3,10 +3,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
-/**
- * Habilita Compose no modulo e injeta o BOM + artefatos base.
- * Aplicado sobre desafiomb.android.application ou desafiomb.android.library.
- */
 class AndroidComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
