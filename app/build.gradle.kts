@@ -12,6 +12,7 @@ android {
         applicationId = "br.com.edmundo.desafiomb"
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "br.com.edmundo.desafiomb.app.NoKoinTestRunner"
     }
 
     buildFeatures {
@@ -37,9 +38,14 @@ dependencies {
 
     testImplementation(project(":core:testing"))
 
+    androidTestImplementation(project(":core:testing"))
+    androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(platform(libs.koin.bom))
     androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.koin.android.test)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.koin.android.test) {
+        exclude(group = "io.insert-koin", module = "koin-androidx-workmanager")
+    }
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

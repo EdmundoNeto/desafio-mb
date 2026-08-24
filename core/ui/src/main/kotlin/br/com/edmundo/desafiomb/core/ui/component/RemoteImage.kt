@@ -9,13 +9,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 
 @Composable
-fun RemoteImage(url: String?, contentDescription: String, modifier: Modifier = Modifier) {
+fun RemoteImage(url: String?, contentDescription: String, modifier: Modifier = Modifier, size: Dp = 48.dp) {
     if (url == null) {
-        Surface(modifier = modifier.size(48.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
+        Surface(modifier = modifier.size(size), color = MaterialTheme.colorScheme.surfaceVariant) {
             Icon(imageVector = Icons.Default.CurrencyExchange, contentDescription = contentDescription)
         }
         return
@@ -23,7 +24,7 @@ fun RemoteImage(url: String?, contentDescription: String, modifier: Modifier = M
     AsyncImage(
         model = url,
         contentDescription = contentDescription,
-        modifier = modifier.size(48.dp),
+        modifier = modifier.size(size),
         contentScale = ContentScale.Fit,
     )
 }

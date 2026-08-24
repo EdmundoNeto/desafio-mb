@@ -2,6 +2,8 @@ package br.com.edmundo.desafiomb.feature.exchanges.mapper
 
 import br.com.edmundo.desafiomb.core.domain.error.AppError
 import br.com.edmundo.desafiomb.core.domain.model.Exchange
+import br.com.edmundo.desafiomb.core.domain.model.ExchangeAsset
+import br.com.edmundo.desafiomb.core.domain.model.ExchangeDetail
 import br.com.edmundo.desafiomb.core.ui.R
 import br.com.edmundo.desafiomb.core.ui.text.UiText
 import java.time.Instant
@@ -64,5 +66,62 @@ class UiMappersTest {
         val uiError = AppError.RateLimited(retryAfter = 5.seconds).toUiError()
 
         assertTrue(uiError.isRetryable)
+    }
+
+    @Test
+    fun `dado um exchange detail completo, quando mapeado para ui, entao formata taxas e data`() {
+        val detail = ExchangeDetail(
+            id = 270,
+            name = "Binance",
+            logoUrl = "https://example.com/270.png",
+            description = "Sobre a Binance",
+            websiteUrl = "https://www.binance.com",
+            makerFee = 0.02,
+            takerFee = 0.04,
+            dateLaunched = Instant.parse("2017-07-14T00:00:00.000Z"),
+        )
+
+        val uiModel = detail.toUiModel(ptBr)
+
+        assertEquals(270, uiModel.id)
+        assertEquals("0,02%", uiModel.makerFee)
+        assertEquals("0,04%", uiModel.takerFee)
+        assertEquals("14/07/2017", uiModel.launchedAt)
+    }
+
+    @Test
+    fun `dado um exchange detail sem taxas nem data, quando mapeado para ui, entao usa travessao`() {
+        val detail = ExchangeDetail(
+            id = 1,
+            name = "X",
+            logoUrl = null,
+            description = null,
+            websiteUrl = null,
+            makerFee = null,
+            takerFee = null,
+            dateLaunched = null,
+        )
+
+        val uiModel = detail.toUiModel(ptBr)
+
+        assertEquals("—", uiModel.makerFee)
+        assertEquals("—", uiModel.takerFee)
+        assertEquals("—", uiModel.launchedAt)
+    }
+
+    @Test
+    fun `dado um exchange asset, quando mapeado para ui, entao formata o preco`() {
+        val asset = ExchangeAsset(
+            walletAddress = "0x1",
+            currencyName = "Ethereum",
+            currencyPriceUsd = 3204.1,
+            currencySymbol = "ETH",
+            balance = 10.0,
+        )
+
+        val uiModel = asset.toUiModel(ptBr)
+
+        assertEquals("Ethereum", uiModel.currencyName)
+        assertEquals("US$ 3.204,10", uiModel.priceUsd)
     }
 }
