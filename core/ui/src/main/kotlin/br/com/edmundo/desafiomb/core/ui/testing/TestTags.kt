@@ -1,9 +1,5 @@
 package br.com.edmundo.desafiomb.core.ui.testing
 
-/**
- * testTags centralizados (SD-04): producao e teste compartilham a mesma constante,
- * entao renomear nao quebra em silencio.
- */
 object TestTags {
     const val EXCHANGE_LIST = "exchange_list"
     const val LIST_SKELETON = "list_skeleton"

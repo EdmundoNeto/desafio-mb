@@ -2,8 +2,6 @@ package br.com.edmundo.desafiomb.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Paleta M3 propria. dynamicColor fica desativado para garantir contraste AA
-// consistente entre dispositivos (spec 8, RNF-05).
 internal val Blue40 = Color(0xFF1B5FBF)
 internal val Blue80 = Color(0xFFA9C7FF)
 internal val Blue90 = Color(0xFFD6E3FF)

@@ -48,10 +48,6 @@ private val DarkColors = darkColorScheme(
     onErrorContainer = Red80,
 )
 
-/**
- * Tema unico do app (RNF-06: claro/escuro).
- * `dynamicColor` deliberadamente ausente - spec 8.
- */
 @Composable
 fun CmcTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

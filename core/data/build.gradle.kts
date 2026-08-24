@@ -8,11 +8,6 @@ plugins {
     alias(libs.plugins.room)
 }
 
-/**
- * Secrets (ADR-05 / spec 2.3). Le local.properties sem depender de API interna do AGP
- * (`gradleLocalProperties` e `com.android.build.gradle.internal.*`, instavel entre versoes).
- * O build NAO falha com a chave vazia - a ausencia vira AppError.InvalidApiKey em runtime.
- */
 val cmcApiKey: String = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
