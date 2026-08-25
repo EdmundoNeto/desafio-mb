@@ -48,6 +48,7 @@ import br.com.edmundo.desafiomb.core.ui.component.ExpandableText
 import br.com.edmundo.desafiomb.core.ui.component.LoadingSkeleton
 import br.com.edmundo.desafiomb.core.ui.component.RankBadge
 import br.com.edmundo.desafiomb.core.ui.component.RemoteImage
+import br.com.edmundo.desafiomb.core.ui.component.SkeletonVariant
 import br.com.edmundo.desafiomb.core.ui.component.StatTile
 import br.com.edmundo.desafiomb.core.ui.testing.TestTags
 import br.com.edmundo.desafiomb.core.ui.text.asString
@@ -145,7 +146,7 @@ private fun ExchangeDetailContent(
         item { AssetsSectionHeader(assetsState) }
 
         when (assetsState) {
-            AssetsState.Loading -> item { LoadingSkeleton(itemCount = 5) }
+            AssetsState.Loading -> item { LoadingSkeleton(itemCount = 5, variant = SkeletonVariant.DividedRow) }
 
             is AssetsState.Content -> items(assetsState.items) { asset -> AssetRow(asset) }
 
