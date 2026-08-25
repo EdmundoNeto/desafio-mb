@@ -17,20 +17,28 @@ import java.net.UnknownHostException
 import kotlin.time.Duration.Companion.seconds
 
 class ErrorMapperTest {
-
-    private fun httpException(code: Int, headers: Map<String, String> = emptyMap()): HttpException {
+    private fun httpException(
+        code: Int,
+        headers: Map<String, String> = emptyMap(),
+    ): HttpException {
         var builder = okhttp3.Headers.Builder()
         headers.forEach { (name, value) -> builder = builder.add(name, value) }
-        val response = Response.error<Any>(
-            "".toResponseBody("application/json".toMediaType()),
-            okhttp3.Response.Builder()
-                .code(code)
-                .message("error")
-                .protocol(okhttp3.Protocol.HTTP_1_1)
-                .request(okhttp3.Request.Builder().url("https://pro-api.coinmarketcap.com/").build())
-                .headers(builder.build())
-                .build(),
-        )
+        val response =
+            Response.error<Any>(
+                "".toResponseBody("application/json".toMediaType()),
+                okhttp3.Response
+                    .Builder()
+                    .code(code)
+                    .message("error")
+                    .protocol(okhttp3.Protocol.HTTP_1_1)
+                    .request(
+                        okhttp3.Request
+                            .Builder()
+                            .url("https://pro-api.coinmarketcap.com/")
+                            .build(),
+                    ).headers(builder.build())
+                    .build(),
+            )
         return HttpException(response)
     }
 

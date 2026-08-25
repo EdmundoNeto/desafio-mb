@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExchangeDetailDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: ExchangeDetailEntity)
 

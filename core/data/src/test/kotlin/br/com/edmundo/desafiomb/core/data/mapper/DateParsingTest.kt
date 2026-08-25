@@ -5,7 +5,6 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class DateParsingTest {
-
     @Test
     fun `dado ISO-8601 valido, quando parseIsoToEpochMillis, entao retorna o epoch correspondente`() {
         val epochMillis = DateParsing.parseIsoToEpochMillis("2017-07-14T00:00:00.000Z")

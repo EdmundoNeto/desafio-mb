@@ -19,7 +19,6 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class DataModulesResolutionTest {
-
     @Before
     fun setUp() {
         stopKoin()
@@ -32,10 +31,11 @@ class DataModulesResolutionTest {
 
     @Test
     fun `dado os modulos de data, quando resolvidos, entao cada definicao constroi uma instancia valida`() {
-        val koinApp = koinApplication {
-            androidContext(ApplicationProvider.getApplicationContext())
-            modules(networkModule, databaseModule, repositoryModule)
-        }
+        val koinApp =
+            koinApplication {
+                androidContext(ApplicationProvider.getApplicationContext())
+                modules(networkModule, databaseModule, repositoryModule)
+            }
         startKoin(koinApp)
 
         val okHttpClient = koinApp.koin.get<OkHttpClient>()

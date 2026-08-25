@@ -14,7 +14,12 @@ data class ExchangeListUiState(
 
 sealed interface AppendState {
     data object Idle : AppendState
+
     data object Loading : AppendState
-    data class Error(val error: UiError) : AppendState
+
+    data class Error(
+        val error: UiError,
+    ) : AppendState
+
     data object EndReached : AppendState
 }

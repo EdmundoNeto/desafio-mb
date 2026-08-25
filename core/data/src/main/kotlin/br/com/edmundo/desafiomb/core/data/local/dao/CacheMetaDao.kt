@@ -8,7 +8,6 @@ import br.com.edmundo.desafiomb.core.data.local.entity.CacheMetaEntity
 
 @Dao
 interface CacheMetaDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: CacheMetaEntity)
 

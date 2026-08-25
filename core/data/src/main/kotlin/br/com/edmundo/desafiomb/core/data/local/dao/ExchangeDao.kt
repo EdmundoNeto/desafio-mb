@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExchangeDao {
-
     @Query(
         """
         SELECT e.* FROM exchange e

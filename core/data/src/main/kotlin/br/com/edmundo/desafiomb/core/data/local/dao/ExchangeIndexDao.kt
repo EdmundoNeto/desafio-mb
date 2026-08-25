@@ -8,7 +8,6 @@ import br.com.edmundo.desafiomb.core.data.local.entity.ExchangeIndexEntity
 
 @Dao
 interface ExchangeIndexDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<ExchangeIndexEntity>)
 
@@ -16,7 +15,10 @@ interface ExchangeIndexDao {
     suspend fun clear()
 
     @Query("SELECT id FROM exchange_index ORDER BY rank ASC LIMIT :limit OFFSET :offset")
-    suspend fun idsForRange(offset: Int, limit: Int): List<Int>
+    suspend fun idsForRange(
+        offset: Int,
+        limit: Int,
+    ): List<Int>
 
     @Query("SELECT COUNT(*) FROM exchange_index")
     suspend fun indexSize(): Int

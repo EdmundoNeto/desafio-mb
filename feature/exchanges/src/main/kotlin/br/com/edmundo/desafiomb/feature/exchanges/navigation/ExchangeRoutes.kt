@@ -6,4 +6,6 @@ import kotlinx.serialization.Serializable
 data object ExchangeListRoute
 
 @Serializable
-data class ExchangeDetailRoute(val exchangeId: Int)
+data class ExchangeDetailRoute(
+    val exchangeId: Int,
+)

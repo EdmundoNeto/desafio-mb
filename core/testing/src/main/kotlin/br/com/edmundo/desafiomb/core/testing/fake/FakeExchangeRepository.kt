@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeExchangeRepository : ExchangeRepository {
-
     private val exchangesFlow = MutableStateFlow<List<Exchange>>(emptyList())
     private val detailFlow = MutableStateFlow<ExchangeDetail?>(null)
 
@@ -40,7 +39,10 @@ class FakeExchangeRepository : ExchangeRepository {
 
     override fun observeExchanges(): Flow<List<Exchange>> = exchangesFlow
 
-    override suspend fun loadPage(page: Int, pageSize: Int): DomainResult<PageLoad> {
+    override suspend fun loadPage(
+        page: Int,
+        pageSize: Int,
+    ): DomainResult<PageLoad> {
         loadPageCalls = loadPageCalls + page
         loadPageGate?.await()
         return loadPageResult

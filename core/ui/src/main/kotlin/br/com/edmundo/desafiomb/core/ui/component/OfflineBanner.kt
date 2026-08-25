@@ -8,18 +8,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import br.com.edmundo.desafiomb.core.ui.testing.TestTags
+import br.com.edmundo.desafiomb.core.ui.theme.Spacing
 
 @Composable
-fun OfflineBanner(message: String, modifier: Modifier = Modifier) {
+fun OfflineBanner(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = message,
         style = MaterialTheme.typography.bodySmall,
-        modifier = modifier
-            .fillMaxWidth()
-            .testTag(TestTags.OFFLINE_BANNER)
-            .background(MaterialTheme.colorScheme.errorContainer)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .testTag(TestTags.OFFLINE_BANNER)
+                .background(MaterialTheme.colorScheme.errorContainer)
+                .padding(horizontal = Spacing.md, vertical = Spacing.sm),
     )
 }

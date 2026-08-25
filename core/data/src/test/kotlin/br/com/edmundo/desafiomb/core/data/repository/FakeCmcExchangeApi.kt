@@ -15,7 +15,6 @@ class FakeCmcExchangeApi(
     var onGetExchangeAssets: suspend (id: Int) -> CmcResponse<List<ExchangeAssetDto>> =
         { CmcResponse(CmcStatus(), emptyList()) },
 ) : CmcExchangeApi {
-
     var mapCallCount = 0
         private set
     var infoCallCount = 0
@@ -24,12 +23,19 @@ class FakeCmcExchangeApi(
         private set
     val infoRequestedIds = mutableListOf<String>()
 
-    override suspend fun getExchangeMap(sort: String, limit: Int, listingStatus: String): CmcResponse<List<ExchangeMapItemDto>> {
+    override suspend fun getExchangeMap(
+        sort: String,
+        limit: Int,
+        listingStatus: String,
+    ): CmcResponse<List<ExchangeMapItemDto>> {
         mapCallCount++
         return onGetExchangeMap()
     }
 
-    override suspend fun getExchangeInfo(ids: String, aux: String): CmcResponse<Map<String, ExchangeInfoDto>> {
+    override suspend fun getExchangeInfo(
+        ids: String,
+        aux: String,
+    ): CmcResponse<Map<String, ExchangeInfoDto>> {
         infoCallCount++
         infoRequestedIds += ids
         return onGetExchangeInfo(ids)

@@ -8,6 +8,7 @@ import br.com.edmundo.desafiomb.core.data.local.dao.ExchangeDao
 import br.com.edmundo.desafiomb.core.data.local.dao.ExchangeDetailDao
 import br.com.edmundo.desafiomb.core.data.local.dao.ExchangeIndexDao
 import br.com.edmundo.desafiomb.core.data.local.entity.CacheMetaEntity
+import br.com.edmundo.desafiomb.core.data.local.entity.ExchangeEntity
 import br.com.edmundo.desafiomb.core.data.local.entity.assetsSyncKey
 import br.com.edmundo.desafiomb.core.data.mapper.toDetailEntity
 import br.com.edmundo.desafiomb.core.data.mapper.toDomain
@@ -47,52 +48,73 @@ class ExchangeRepositoryImpl(
     private val timeProvider: TimeProvider,
     private val ioDispatcher: CoroutineDispatcher,
 ) : ExchangeRepository {
-
     override fun observeExchanges(): Flow<List<Exchange>> =
-        exchangeDao.observeHydrated()
+        exchangeDao
+            .observeHydrated()
             .map { entities -> entities.map { it.toDomain() } }
             .flowOn(ioDispatcher)
 
-    override suspend fun loadPage(page: Int, pageSize: Int): DomainResult<PageLoad> = withContext(ioDispatcher) {
-        val indexResult = ensureIndex()
-        if (indexResult is DomainResult.Failure) return@withContext DomainResult.failure(indexResult.error)
+    override suspend fun loadPage(
+        page: Int,
+        pageSize: Int,
+    ): DomainResult<PageLoad> =
+        withContext(ioDispatcher) {
+            val indexResult = ensureIndex()
+            if (indexResult is DomainResult.Failure) return@withContext DomainResult.failure(indexResult.error)
 
-        val offset = page * pageSize
-        val ids = indexDao.idsForRange(offset, pageSize)
-        if (ids.isEmpty()) {
-            return@withContext DomainResult.success(PageLoad.Fresh(hasMore = false))
+            val offset = page * pageSize
+            val pageIds = indexDao.idsForRange(offset, pageSize)
+            if (pageIds.isEmpty()) {
+                return@withContext DomainResult.success(PageLoad.Fresh(hasMore = false))
+            }
+
+            val now = timeProvider.now()
+            val cachedByPageId = exchangeDao.getByIds(pageIds).associateBy { it.id }
+            val hasMore = hasMore(offset, pageSize)
+
+            if (isPageFresh(pageIds, cachedByPageId, now)) {
+                return@withContext DomainResult.success(PageLoad.Fresh(hasMore))
+            }
+
+            refreshInfoBlock(offset, pageIds, cachedByPageId, now, hasMore)
         }
 
-        val now = timeProvider.now()
-        val existing = exchangeDao.getByIds(ids).associateBy { it.id }
-        val missing = ids.filter { id ->
-            val entity = existing[id]
+    private fun isPageFresh(
+        pageIds: List<Int>,
+        cachedByPageId: Map<Int, ExchangeEntity>,
+        now: Long,
+    ): Boolean =
+        pageIds.none { id ->
+            val entity = cachedByPageId[id]
             entity == null || TtlPolicy.isStale(entity.updatedAt, TtlPolicy.LIST, now)
         }
 
-        if (missing.isEmpty()) {
-            return@withContext DomainResult.success(PageLoad.Fresh(hasMore = hasMore(offset, pageSize)))
-        }
-
+    private suspend fun refreshInfoBlock(
+        offset: Int,
+        pageIds: List<Int>,
+        cachedByPageId: Map<Int, ExchangeEntity>,
+        now: Long,
+        hasMore: Boolean,
+    ): DomainResult<PageLoad> {
         val blockStart = (offset / INFO_BLOCK_SIZE) * INFO_BLOCK_SIZE
         val blockIds = indexDao.idsForRange(blockStart, INFO_BLOCK_SIZE)
 
-        val infoResult = safeApiCall(
-            call = { api.getExchangeInfo(ids = blockIds.joinToString(",")) },
-            transform = { data -> data.values.toList() },
-        )
+        val infoResult =
+            safeApiCall(
+                call = { api.getExchangeInfo(ids = blockIds.joinToString(",")) },
+                transform = { data -> data.values.toList() },
+            )
 
-        when (infoResult) {
+        return when (infoResult) {
             is DomainResult.Success -> {
-                val entities = infoResult.value.map { it.toExchangeEntity(now) }
-                exchangeDao.upsertAll(entities)
-                DomainResult.success(PageLoad.Fresh(hasMore = hasMore(offset, pageSize)))
+                exchangeDao.upsertAll(infoResult.value.map { it.toExchangeEntity(now) })
+                DomainResult.success(PageLoad.Fresh(hasMore))
             }
 
             is DomainResult.Failure -> {
-                val hasCacheForPage = ids.any { existing.containsKey(it) }
+                val hasCacheForPage = pageIds.any { cachedByPageId.containsKey(it) }
                 if (hasCacheForPage) {
-                    DomainResult.success(PageLoad.Cached(hasMore = hasMore(offset, pageSize), error = infoResult.error))
+                    DomainResult.success(PageLoad.Cached(hasMore, infoResult.error))
                 } else {
                     DomainResult.failure(infoResult.error)
                 }
@@ -100,7 +122,10 @@ class ExchangeRepositoryImpl(
         }
     }
 
-    private suspend fun hasMore(offset: Int, pageSize: Int): Boolean = offset + pageSize < indexDao.indexSize()
+    private suspend fun hasMore(
+        offset: Int,
+        pageSize: Int,
+    ): Boolean = offset + pageSize < indexDao.indexSize()
 
     private suspend fun ensureIndex(): DomainResult<Unit> {
         val now = timeProvider.now()
@@ -121,78 +146,84 @@ class ExchangeRepositoryImpl(
         )
     }
 
-    private suspend fun replaceIndex(items: List<ExchangeMapItemDto>, now: Long) {
+    private suspend fun replaceIndex(
+        items: List<ExchangeMapItemDto>,
+        now: Long,
+    ) {
         db.withTransaction {
             indexDao.clear()
             indexDao.insertAll(items.mapIndexed { rank, dto -> dto.toIndexEntity(rank, now) })
         }
     }
 
-    override suspend fun refresh(): DomainResult<Unit> = withContext(ioDispatcher) {
-        val now = timeProvider.now()
-        val mapResult = safeApiCall(call = { api.getExchangeMap() }, transform = { it })
-        mapResult.fold(
-            onSuccess = { items ->
-                db.withTransaction {
-                    indexDao.clear()
-                    indexDao.insertAll(items.mapIndexed { rank, dto -> dto.toIndexEntity(rank, now) })
-                    exchangeDao.deleteOrphans()
-                }
-                DomainResult.success(Unit)
-            },
-            onFailure = { error -> DomainResult.failure(error) },
-        )
-    }
+    override suspend fun refresh(): DomainResult<Unit> =
+        withContext(ioDispatcher) {
+            val now = timeProvider.now()
+            val mapResult = safeApiCall(call = { api.getExchangeMap() }, transform = { it })
+            mapResult.fold(
+                onSuccess = { items ->
+                    db.withTransaction {
+                        indexDao.clear()
+                        indexDao.insertAll(items.mapIndexed { rank, dto -> dto.toIndexEntity(rank, now) })
+                        exchangeDao.deleteOrphans()
+                    }
+                    DomainResult.success(Unit)
+                },
+                onFailure = { error -> DomainResult.failure(error) },
+            )
+        }
 
     override fun observeExchangeDetail(id: Int): Flow<ExchangeDetail?> =
         combine(exchangeDao.observeById(id), detailDao.observeById(id)) { base, detail ->
             base?.let { toExchangeDetail(it, detail) }
         }.flowOn(ioDispatcher)
 
-    override suspend fun syncExchangeDetail(id: Int): DomainResult<Unit> = withContext(ioDispatcher) {
-        val now = timeProvider.now()
-        val cached = detailDao.getById(id)
-        if (cached != null && !TtlPolicy.isStale(cached.updatedAt, TtlPolicy.DETAIL, now)) {
-            return@withContext DomainResult.success(Unit)
+    override suspend fun syncExchangeDetail(id: Int): DomainResult<Unit> =
+        withContext(ioDispatcher) {
+            val now = timeProvider.now()
+            val cached = detailDao.getById(id)
+            if (cached != null && !TtlPolicy.isStale(cached.updatedAt, TtlPolicy.DETAIL, now)) {
+                return@withContext DomainResult.success(Unit)
+            }
+
+            safeApiCall(
+                call = { api.getExchangeInfo(ids = id.toString()) },
+                transform = { data -> data.values.first() },
+            ).fold(
+                onSuccess = { dto ->
+                    db.withTransaction {
+                        exchangeDao.upsertAll(listOf(dto.toExchangeEntity(now)))
+                        detailDao.upsert(dto.toDetailEntity(now))
+                    }
+                    DomainResult.success(Unit)
+                },
+                onFailure = { error -> DomainResult.failure(error) },
+            )
         }
 
-        safeApiCall(
-            call = { api.getExchangeInfo(ids = id.toString()) },
-            transform = { data -> data.values.first() },
-        ).fold(
-            onSuccess = { dto ->
-                db.withTransaction {
-                    exchangeDao.upsertAll(listOf(dto.toExchangeEntity(now)))
-                    detailDao.upsert(dto.toDetailEntity(now))
-                }
-                DomainResult.success(Unit)
-            },
-            onFailure = { error -> DomainResult.failure(error) },
-        )
-    }
+    override suspend fun getExchangeAssets(id: Int): DomainResult<List<ExchangeAsset>> =
+        withContext(ioDispatcher) {
+            val now = timeProvider.now()
+            val syncKey = assetsSyncKey(id)
+            val syncedAt = cacheMetaDao.getSyncedAt(syncKey)
+            if (syncedAt != null && !TtlPolicy.isStale(syncedAt, TtlPolicy.ASSETS, now)) {
+                return@withContext DomainResult.success(assetDao.getByExchangeId(id).map { it.toDomain() })
+            }
 
-    override suspend fun getExchangeAssets(id: Int): DomainResult<List<ExchangeAsset>> = withContext(ioDispatcher) {
-        val now = timeProvider.now()
-        val syncKey = assetsSyncKey(id)
-        val syncedAt = cacheMetaDao.getSyncedAt(syncKey)
-        if (syncedAt != null && !TtlPolicy.isStale(syncedAt, TtlPolicy.ASSETS, now)) {
-            return@withContext DomainResult.success(assetDao.getByExchangeId(id).map { it.toDomain() })
+            safeApiCall(
+                call = { api.getExchangeAssets(id) },
+                transform = { it },
+            ).fold(
+                onSuccess = { dtos ->
+                    val entities = dtos.map { it.toEntity(id, now) }
+                    db.withTransaction {
+                        assetDao.deleteByExchangeId(id)
+                        assetDao.insertAll(entities)
+                        cacheMetaDao.upsert(CacheMetaEntity(key = syncKey, syncedAt = now))
+                    }
+                    DomainResult.success(entities.sortedByDescending { it.currencyPriceUsd }.map { it.toDomain() })
+                },
+                onFailure = { error -> DomainResult.failure(error) },
+            )
         }
-
-        safeApiCall(
-            call = { api.getExchangeAssets(id) },
-            transform = { it },
-        ).fold(
-            onSuccess = { dtos ->
-                val entities = dtos.map { it.toEntity(id, now) }
-                db.withTransaction {
-                    assetDao.deleteByExchangeId(id)
-                    assetDao.insertAll(entities)
-                    cacheMetaDao.upsert(CacheMetaEntity(key = syncKey, syncedAt = now))
-                }
-                DomainResult.success(entities.sortedByDescending { it.currencyPriceUsd }.map { it.toDomain() })
-            },
-            onFailure = { error -> DomainResult.failure(error) },
-        )
-    }
 }

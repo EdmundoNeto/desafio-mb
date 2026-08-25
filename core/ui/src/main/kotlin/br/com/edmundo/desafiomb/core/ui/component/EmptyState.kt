@@ -9,11 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import br.com.edmundo.desafiomb.core.ui.theme.Spacing
 
 @Composable
-fun EmptyState(message: String, modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
+fun EmptyState(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize().padding(Spacing.xl), contentAlignment = Alignment.Center) {
         Text(text = message, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
     }
 }

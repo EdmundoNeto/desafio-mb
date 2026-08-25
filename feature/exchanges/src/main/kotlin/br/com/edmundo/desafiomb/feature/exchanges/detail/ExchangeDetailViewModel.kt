@@ -29,12 +29,12 @@ class ExchangeDetailViewModel(
     private val getExchangeDetail: GetExchangeDetailUseCase,
     private val getExchangeAssets: GetExchangeAssetsUseCase,
 ) : ViewModel() {
-
     private val exchangeId: Int = savedStateHandle.toRoute<ExchangeDetailRoute>().exchangeId
 
     private val _state = MutableStateFlow(ExchangeDetailUiState())
-    val state: StateFlow<ExchangeDetailUiState> = _state
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ExchangeDetailUiState())
+    val state: StateFlow<ExchangeDetailUiState> =
+        _state
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ExchangeDetailUiState())
 
     private val _events = Channel<ExchangeDetailEvent>(Channel.BUFFERED)
     val events: Flow<ExchangeDetailEvent> = _events.receiveAsFlow()
@@ -81,25 +81,27 @@ class ExchangeDetailViewModel(
     private fun applyDetailResult(
         current: ExchangeDetailUiState,
         result: DomainResult<Unit>,
-    ): ExchangeDetailUiState = result.fold(
-        onSuccess = { current.copy(headerError = null, isLoadingHeader = false) },
-        onFailure = { error ->
-            if (current.header == null) {
-                current.copy(headerError = error.toUiError(), isLoadingHeader = false)
-            } else {
-                current.copy(isLoadingHeader = false)
-            }
-        },
-    )
+    ): ExchangeDetailUiState =
+        result.fold(
+            onSuccess = { current.copy(headerError = null, isLoadingHeader = false) },
+            onFailure = { error ->
+                if (current.header == null) {
+                    current.copy(headerError = error.toUiError(), isLoadingHeader = false)
+                } else {
+                    current.copy(isLoadingHeader = false)
+                }
+            },
+        )
 
-    private fun toAssetsState(result: DomainResult<List<ExchangeAsset>>): AssetsState = result.fold(
-        onSuccess = { assets ->
-            if (assets.isEmpty()) {
-                AssetsState.Empty
-            } else {
-                AssetsState.Content(items = assets.map { it.toUiModel() }, total = assets.size)
-            }
-        },
-        onFailure = { error -> AssetsState.Error(error.toUiError()) },
-    )
+    private fun toAssetsState(result: DomainResult<List<ExchangeAsset>>): AssetsState =
+        result.fold(
+            onSuccess = { assets ->
+                if (assets.isEmpty()) {
+                    AssetsState.Empty
+                } else {
+                    AssetsState.Content(items = assets.map { it.toUiModel() }, total = assets.size)
+                }
+            },
+            onFailure = { error -> AssetsState.Error(error.toUiError()) },
+        )
 }

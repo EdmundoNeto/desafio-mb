@@ -24,11 +24,11 @@ import org.koin.test.KoinTestRule
 import org.koin.test.get
 
 class ExchangeListScreenTest : KoinTest {
-
     @get:Rule
-    val koinTestRule = KoinTestRule.create {
-        modules(domainModule, exchangesModule, fakeRepositoryModule)
-    }
+    val koinTestRule =
+        KoinTestRule.create {
+            modules(domainModule, exchangesModule, fakeRepositoryModule)
+        }
 
     @get:Rule
     val composeRule = createComposeRule()

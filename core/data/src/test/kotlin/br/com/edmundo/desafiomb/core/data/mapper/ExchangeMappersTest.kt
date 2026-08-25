@@ -12,14 +12,14 @@ import org.junit.Test
 import java.time.Instant
 
 class ExchangeMappersTest {
-
     private val now = 1_700_000_000_000L
 
     private fun decodeInfo(json: String): ExchangeInfoDto {
-        val response = cmcJson.decodeFromString(
-            CmcResponse.serializer(MapSerializer(String.serializer(), ExchangeInfoDto.serializer())),
-            json,
-        )
+        val response =
+            cmcJson.decodeFromString(
+                CmcResponse.serializer(MapSerializer(String.serializer(), ExchangeInfoDto.serializer())),
+                json,
+            )
         return response.data!!.getValue("270")
     }
 

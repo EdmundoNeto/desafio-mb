@@ -12,4 +12,5 @@
     <string name="action_show_more">Ver mais</string>
     <string name="action_show_less">Ver menos</string>
     <string name="action_back">Voltar</string>
+    <string name="action_refresh">Atualizar</string>
 </resources>

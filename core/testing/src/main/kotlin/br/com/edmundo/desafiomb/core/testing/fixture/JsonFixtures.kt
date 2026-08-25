@@ -1,8 +1,8 @@
 package br.com.edmundo.desafiomb.core.testing.fixture
 
 object JsonFixtures {
-
-    val exchangeMapResponse = """
+    val exchangeMapResponse =
+        """
         {
           "status": {"error_code":0,"error_message":null,"credit_count":1,"elapsed":10},
           "data": [
@@ -10,9 +10,10 @@ object JsonFixtures {
             {"id":89,"name":"Coinbase Exchange","slug":"coinbase-exchange","is_active":1}
           ]
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    val exchangeInfoResponse = """
+    val exchangeInfoResponse =
+        """
         {
           "status": {"error_code":0,"error_message":null,"credit_count":1,"elapsed":12},
           "data": {
@@ -31,9 +32,10 @@ object JsonFixtures {
             }
           }
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    val exchangeInfoResponseMinimalFields = """
+    val exchangeInfoResponseMinimalFields =
+        """
         {
           "status": {"error_code":0,"error_message":null,"credit_count":1,"elapsed":12},
           "data": {
@@ -44,9 +46,10 @@ object JsonFixtures {
             }
           }
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    val exchangeAssetsResponse = """
+    val exchangeAssetsResponse =
+        """
         {
           "status": {"error_code":0,"error_message":null,"credit_count":1,"elapsed":8},
           "data": [
@@ -58,13 +61,15 @@ object JsonFixtures {
             }
           ]
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    val emptyDataResponse = """
+    val emptyDataResponse =
+        """
         {"status":{"error_code":0,"error_message":null,"credit_count":0,"elapsed":1},"data":null}
-    """.trimIndent()
+        """.trimIndent()
 
-    val invalidApiKeyResponse = """
+    val invalidApiKeyResponse =
+        """
         {"status":{"error_code":1001,"error_message":"API key missing.","credit_count":0,"elapsed":1},"data":null}
-    """.trimIndent()
+        """.trimIndent()
 }

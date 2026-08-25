@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Test
 
 class RetryPolicyTest {
-
     private lateinit var server: MockWebServer
     private val sleptMillis = mutableListOf<Long>()
 
@@ -27,17 +26,17 @@ class RetryPolicyTest {
         server.shutdown()
     }
 
-    private fun client(maxAttempts: Int = 3) = OkHttpClient.Builder()
-        .addInterceptor(
-            RetryInterceptor(
-                maxAttempts = maxAttempts,
-                sleep = { millis -> sleptMillis += millis },
-            ),
-        )
-        .build()
+    private fun client(maxAttempts: Int = 3) =
+        OkHttpClient
+            .Builder()
+            .addInterceptor(
+                RetryInterceptor(
+                    maxAttempts = maxAttempts,
+                    sleep = { millis -> sleptMillis += millis },
+                ),
+            ).build()
 
-    private fun execute(client: OkHttpClient) =
-        client.newCall(Request.Builder().url(server.url("/v1/exchange/map")).build()).execute()
+    private fun execute(client: OkHttpClient) = client.newCall(Request.Builder().url(server.url("/v1/exchange/map")).build()).execute()
 
     @Test
     fun `dado 503 seguido de 200, quando interceptado, entao tenta novamente e retorna sucesso`() {

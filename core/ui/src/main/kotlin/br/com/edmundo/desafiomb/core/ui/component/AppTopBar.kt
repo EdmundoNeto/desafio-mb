@@ -34,7 +34,7 @@ fun AppTopBar(
         actions = {
             if (onRefresh != null) {
                 IconButton(onClick = onRefresh) {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = title)
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = stringResource(R.string.action_refresh))
                 }
             }
         },
