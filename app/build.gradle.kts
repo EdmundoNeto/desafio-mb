@@ -10,8 +10,8 @@ android {
 
     defaultConfig {
         applicationId = "br.com.edmundo.desafiomb"
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
         testInstrumentationRunner = "br.com.edmundo.desafiomb.app.NoKoinTestRunner"
     }
 
