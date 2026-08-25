@@ -39,7 +39,6 @@ robolectric = "4.16.1"
 
 # --- Qualidade ---
 kover = "0.9.9"
-detekt = "1.23.8"
 
 [libraries]
 # Build-logic (para os convention plugins acessarem os plugins como dependencia)
@@ -118,4 +117,3 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

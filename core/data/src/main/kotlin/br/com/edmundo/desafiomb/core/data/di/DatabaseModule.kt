@@ -7,13 +7,14 @@ import org.koin.dsl.module
 
 private const val DATABASE_NAME = "cmc-exchanges.db"
 
-val databaseModule = module {
-    single {
-        Room.databaseBuilder(get<Context>(), CmcDatabase::class.java, DATABASE_NAME).build()
+val databaseModule =
+    module {
+        single {
+            Room.databaseBuilder(get<Context>(), CmcDatabase::class.java, DATABASE_NAME).build()
+        }
+        single { get<CmcDatabase>().exchangeIndexDao() }
+        single { get<CmcDatabase>().exchangeDao() }
+        single { get<CmcDatabase>().exchangeDetailDao() }
+        single { get<CmcDatabase>().exchangeAssetDao() }
+        single { get<CmcDatabase>().cacheMetaDao() }
     }
-    single { get<CmcDatabase>().exchangeIndexDao() }
-    single { get<CmcDatabase>().exchangeDao() }
-    single { get<CmcDatabase>().exchangeDetailDao() }
-    single { get<CmcDatabase>().exchangeAssetDao() }
-    single { get<CmcDatabase>().cacheMetaDao() }
-}

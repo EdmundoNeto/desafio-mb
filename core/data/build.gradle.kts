@@ -9,12 +9,14 @@ plugins {
     alias(libs.plugins.kover)
 }
 
-val cmcApiKey: String = Properties().apply {
-    val file = rootProject.file("local.properties")
-    if (file.exists()) file.inputStream().use { load(it) }
-}.getProperty("CMC_API_KEY")
-    ?: System.getenv("CMC_API_KEY")
-    ?: ""
+val cmcApiKey: String =
+    Properties()
+        .apply {
+            val file = rootProject.file("local.properties")
+            if (file.exists()) file.inputStream().use { load(it) }
+        }.getProperty("CMC_API_KEY")
+        ?: System.getenv("CMC_API_KEY")
+        ?: ""
 
 android {
     namespace = "br.com.edmundo.desafiomb.core.data"

@@ -9,8 +9,8 @@ import br.com.edmundo.desafiomb.core.domain.di.domainModule
 import br.com.edmundo.desafiomb.feature.exchanges.di.exchangesModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.core.logger.Level
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 class CmcApplication : Application() {
     override fun onCreate() {

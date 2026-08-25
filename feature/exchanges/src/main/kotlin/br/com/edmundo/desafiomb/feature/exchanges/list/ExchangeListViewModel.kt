@@ -24,10 +24,10 @@ class ExchangeListViewModel(
     private val loadExchangesPage: LoadExchangesPageUseCase,
     private val refreshExchanges: RefreshExchangesUseCase,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(ExchangeListUiState())
-    val state: StateFlow<ExchangeListUiState> = _state
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ExchangeListUiState())
+    val state: StateFlow<ExchangeListUiState> =
+        _state
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ExchangeListUiState())
 
     private val appendMutex = Mutex()
     private var page = 0
@@ -82,18 +82,21 @@ class ExchangeListViewModel(
     private fun applyFirstPageResult(
         current: ExchangeListUiState,
         result: DomainResult<PageLoad>,
-    ): ExchangeListUiState = when (result) {
-        is DomainResult.Success -> when (result.value) {
-            is PageLoad.Fresh -> current.copy(fullScreenError = null, isStale = false)
-            is PageLoad.Cached -> current.copy(fullScreenError = null, isStale = true)
-        }
+    ): ExchangeListUiState =
+        when (result) {
+            is DomainResult.Success ->
+                when (result.value) {
+                    is PageLoad.Fresh -> current.copy(fullScreenError = null, isStale = false)
+                    is PageLoad.Cached -> current.copy(fullScreenError = null, isStale = true)
+                }
 
-        is DomainResult.Failure -> if (current.items.isEmpty()) {
-            current.copy(fullScreenError = result.error.toUiError())
-        } else {
-            current.copy(isStale = true)
+            is DomainResult.Failure ->
+                if (current.items.isEmpty()) {
+                    current.copy(fullScreenError = result.error.toUiError())
+                } else {
+                    current.copy(isStale = true)
+                }
         }
-    }
 
     private fun onLoadMore() {
         if (_state.value.appendState is AppendState.Loading) return
@@ -116,9 +119,10 @@ class ExchangeListViewModel(
                         }
                     }
 
-                    is DomainResult.Failure -> _state.update {
-                        it.copy(appendState = AppendState.Error(result.error.toUiError()))
-                    }
+                    is DomainResult.Failure ->
+                        _state.update {
+                            it.copy(appendState = AppendState.Error(result.error.toUiError()))
+                        }
                 }
             }
         }

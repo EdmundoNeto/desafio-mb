@@ -21,30 +21,45 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import br.com.edmundo.desafiomb.core.ui.testing.TestTags
+import br.com.edmundo.desafiomb.core.ui.theme.Spacing
+
+private const val SKELETON_MIN_ALPHA = 0.3f
+private const val SKELETON_MAX_ALPHA = 0.9f
+private const val SKELETON_ANIMATION_DURATION_MS = 700
+private const val SKELETON_LINE_WIDTH_FRACTION = 0.6f
+private val SkeletonLineHeight = 20.dp
+private val SkeletonCornerRadius = 4.dp
 
 @Composable
-fun LoadingSkeleton(modifier: Modifier = Modifier, itemCount: Int = 8) {
+fun LoadingSkeleton(
+    modifier: Modifier = Modifier,
+    itemCount: Int = 8,
+) {
     val transition = rememberInfiniteTransition(label = "skeleton")
     val alpha by transition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.9f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 700, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
+        initialValue = SKELETON_MIN_ALPHA,
+        targetValue = SKELETON_MAX_ALPHA,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = SKELETON_ANIMATION_DURATION_MS, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
         label = "skeletonAlpha",
     )
-    val baseColor = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha)
-        .compositeOver(MaterialTheme.colorScheme.surface)
+    val baseColor =
+        MaterialTheme.colorScheme.onSurface
+            .copy(alpha = alpha)
+            .compositeOver(MaterialTheme.colorScheme.surface)
 
     Column(modifier = modifier.testTag(TestTags.LIST_SKELETON)) {
         repeat(itemCount) {
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.md)) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(20.dp)
-                        .background(baseColor, RoundedCornerShape(4.dp)),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(SKELETON_LINE_WIDTH_FRACTION)
+                            .height(SkeletonLineHeight)
+                            .background(baseColor, RoundedCornerShape(SkeletonCornerRadius)),
                 )
             }
         }

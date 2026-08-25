@@ -6,27 +6,27 @@ import br.com.edmundo.desafiomb.core.domain.model.ExchangeAsset
 import br.com.edmundo.desafiomb.core.domain.model.ExchangeDetail
 import br.com.edmundo.desafiomb.core.ui.R
 import br.com.edmundo.desafiomb.core.ui.text.UiText
-import java.time.Instant
-import java.util.Locale
-import kotlin.time.Duration.Companion.seconds
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.Instant
+import java.util.Locale
+import kotlin.time.Duration.Companion.seconds
 
 class UiMappersTest {
-
     private val ptBr = Locale.of("pt", "BR")
 
     @Test
     fun `dado um exchange completo, quando mapeado para ui, entao formata volume e data`() {
-        val exchange = Exchange(
-            id = 270,
-            name = "Binance",
-            logoUrl = "https://example.com/270.png",
-            spotVolumeUsd = 66_930_000_000.0,
-            dateLaunched = Instant.parse("2017-07-14T00:00:00.000Z"),
-        )
+        val exchange =
+            Exchange(
+                id = 270,
+                name = "Binance",
+                logoUrl = "https://example.com/270.png",
+                spotVolumeUsd = 66_930_000_000.0,
+                dateLaunched = Instant.parse("2017-07-14T00:00:00.000Z"),
+            )
 
         val uiModel = exchange.toUiModel(ptBr)
 
@@ -70,16 +70,17 @@ class UiMappersTest {
 
     @Test
     fun `dado um exchange detail completo, quando mapeado para ui, entao formata taxas e data`() {
-        val detail = ExchangeDetail(
-            id = 270,
-            name = "Binance",
-            logoUrl = "https://example.com/270.png",
-            description = "Sobre a Binance",
-            websiteUrl = "https://www.binance.com",
-            makerFee = 0.02,
-            takerFee = 0.04,
-            dateLaunched = Instant.parse("2017-07-14T00:00:00.000Z"),
-        )
+        val detail =
+            ExchangeDetail(
+                id = 270,
+                name = "Binance",
+                logoUrl = "https://example.com/270.png",
+                description = "Sobre a Binance",
+                websiteUrl = "https://www.binance.com",
+                makerFee = 0.02,
+                takerFee = 0.04,
+                dateLaunched = Instant.parse("2017-07-14T00:00:00.000Z"),
+            )
 
         val uiModel = detail.toUiModel(ptBr)
 
@@ -91,16 +92,17 @@ class UiMappersTest {
 
     @Test
     fun `dado um exchange detail sem taxas nem data, quando mapeado para ui, entao usa travessao`() {
-        val detail = ExchangeDetail(
-            id = 1,
-            name = "X",
-            logoUrl = null,
-            description = null,
-            websiteUrl = null,
-            makerFee = null,
-            takerFee = null,
-            dateLaunched = null,
-        )
+        val detail =
+            ExchangeDetail(
+                id = 1,
+                name = "X",
+                logoUrl = null,
+                description = null,
+                websiteUrl = null,
+                makerFee = null,
+                takerFee = null,
+                dateLaunched = null,
+            )
 
         val uiModel = detail.toUiModel(ptBr)
 
@@ -111,13 +113,14 @@ class UiMappersTest {
 
     @Test
     fun `dado um exchange asset, quando mapeado para ui, entao formata o preco`() {
-        val asset = ExchangeAsset(
-            walletAddress = "0x1",
-            currencyName = "Ethereum",
-            currencyPriceUsd = 3204.1,
-            currencySymbol = "ETH",
-            balance = 10.0,
-        )
+        val asset =
+            ExchangeAsset(
+                walletAddress = "0x1",
+                currencyName = "Ethereum",
+                currencyPriceUsd = 3204.1,
+                currencySymbol = "ETH",
+                balance = 10.0,
+            )
 
         val uiModel = asset.toUiModel(ptBr)
 

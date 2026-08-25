@@ -13,7 +13,15 @@ data class ExchangeDetailUiState(
 
 sealed interface AssetsState {
     data object Loading : AssetsState
-    data class Content(val items: List<ExchangeAssetUiModel>, val total: Int) : AssetsState
+
+    data class Content(
+        val items: List<ExchangeAssetUiModel>,
+        val total: Int,
+    ) : AssetsState
+
     data object Empty : AssetsState
-    data class Error(val error: UiError) : AssetsState
+
+    data class Error(
+        val error: UiError,
+    ) : AssetsState
 }

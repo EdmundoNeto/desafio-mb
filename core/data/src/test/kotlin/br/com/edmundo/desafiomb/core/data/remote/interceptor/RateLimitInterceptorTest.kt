@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Test
 
 class RateLimitInterceptorTest {
-
     private lateinit var server: MockWebServer
     private var clockNanos = 0L
     private val sleptMillis = mutableListOf<Long>()
@@ -29,18 +28,19 @@ class RateLimitInterceptorTest {
         server.shutdown()
     }
 
-    private fun client(permitsPerMinute: Int) = OkHttpClient.Builder()
-        .addInterceptor(
-            RateLimitInterceptor(
-                permitsPerMinute = permitsPerMinute,
-                nanoTime = { clockNanos },
-                sleep = { millis ->
-                    sleptMillis += millis
-                    clockNanos += millis * 1_000_000
-                },
-            ),
-        )
-        .build()
+    private fun client(permitsPerMinute: Int) =
+        OkHttpClient
+            .Builder()
+            .addInterceptor(
+                RateLimitInterceptor(
+                    permitsPerMinute = permitsPerMinute,
+                    nanoTime = { clockNanos },
+                    sleep = { millis ->
+                        sleptMillis += millis
+                        clockNanos += millis * 1_000_000
+                    },
+                ),
+            ).build()
 
     private fun call(client: OkHttpClient) {
         server.enqueue(MockResponse().setResponseCode(200))

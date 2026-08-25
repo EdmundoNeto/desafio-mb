@@ -29,11 +29,11 @@ import org.koin.test.KoinTestRule
 import org.koin.test.get
 
 class NavigationTest : KoinTest {
-
     @get:Rule
-    val koinTestRule = KoinTestRule.create {
-        modules(appModule, domainModule, exchangesModule, fakeRepositoryModule)
-    }
+    val koinTestRule =
+        KoinTestRule.create {
+            modules(appModule, domainModule, exchangesModule, fakeRepositoryModule)
+        }
 
     @get:Rule
     val composeRule = createComposeRule()

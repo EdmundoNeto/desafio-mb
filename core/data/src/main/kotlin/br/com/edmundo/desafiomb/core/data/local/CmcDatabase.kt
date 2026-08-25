@@ -26,8 +26,12 @@ import br.com.edmundo.desafiomb.core.data.local.entity.ExchangeIndexEntity
 )
 abstract class CmcDatabase : RoomDatabase() {
     abstract fun exchangeIndexDao(): ExchangeIndexDao
+
     abstract fun exchangeDao(): ExchangeDao
+
     abstract fun exchangeDetailDao(): ExchangeDetailDao
+
     abstract fun exchangeAssetDao(): ExchangeAssetDao
+
     abstract fun cacheMetaDao(): CacheMetaDao
 }

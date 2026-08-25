@@ -3,14 +3,19 @@ package br.com.edmundo.desafiomb.core.data.remote.interceptor
 import okhttp3.Interceptor
 import okhttp3.Response
 
+private const val DEFAULT_PERMITS_PER_MINUTE = 50
+private const val NANOS_PER_MINUTE = 60_000_000_000.0
+private const val NANOS_PER_MILLI = 1_000_000L
+private const val TOKENS_PER_REQUEST = 1.0
+private const val MIN_WAIT_MILLIS = 1L
+
 class RateLimitInterceptor(
-    permitsPerMinute: Int = 50,
+    permitsPerMinute: Int = DEFAULT_PERMITS_PER_MINUTE,
     private val nanoTime: () -> Long = System::nanoTime,
     private val sleep: (Long) -> Unit = Thread::sleep,
 ) : Interceptor {
-
     private val capacity = permitsPerMinute.toDouble()
-    private val refillPerNano = permitsPerMinute.toDouble() / 60_000_000_000.0
+    private val refillPerNano = permitsPerMinute.toDouble() / NANOS_PER_MINUTE
     private val lock = Any()
     private var tokens = capacity
     private var lastRefill = nanoTime()
@@ -23,12 +28,12 @@ class RateLimitInterceptor(
     private fun acquire() {
         synchronized(lock) {
             refill()
-            while (tokens < 1.0) {
-                val waitNanos = ((1.0 - tokens) / refillPerNano).toLong()
-                sleep((waitNanos / 1_000_000).coerceAtLeast(1))
+            while (tokens < TOKENS_PER_REQUEST) {
+                val waitNanos = ((TOKENS_PER_REQUEST - tokens) / refillPerNano).toLong()
+                sleep((waitNanos / NANOS_PER_MILLI).coerceAtLeast(MIN_WAIT_MILLIS))
                 refill()
             }
-            tokens -= 1.0
+            tokens -= TOKENS_PER_REQUEST
         }
     }
 

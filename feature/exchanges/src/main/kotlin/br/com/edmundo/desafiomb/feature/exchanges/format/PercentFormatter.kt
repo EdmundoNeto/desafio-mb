@@ -5,11 +5,15 @@ import java.math.RoundingMode
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 
-object PercentFormatter {
+private const val PERCENT_SCALE = 3
 
-    fun format(value: Double?, locale: Locale = Locale.getDefault()): String {
-        if (value == null) return "—"
-        val rounded = BigDecimal(value).setScale(3, RoundingMode.HALF_UP)
+object PercentFormatter {
+    fun format(
+        value: Double?,
+        locale: Locale = Locale.getDefault(),
+    ): String {
+        if (value == null) return MISSING_VALUE_PLACEHOLDER
+        val rounded = BigDecimal(value).setScale(PERCENT_SCALE, RoundingMode.HALF_UP)
         if (rounded.compareTo(BigDecimal.ZERO) == 0) return "0%"
         val symbols = DecimalFormatSymbols.getInstance(locale)
         val plain = rounded.stripTrailingZeros().toPlainString()

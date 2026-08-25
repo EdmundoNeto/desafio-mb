@@ -15,7 +15,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import br.com.edmundo.desafiomb.core.ui.R
 
 @Composable
-fun ExpandableText(text: String, modifier: Modifier = Modifier, maxLines: Int = 4) {
+fun ExpandableText(
+    text: String,
+    modifier: Modifier = Modifier,
+    maxLines: Int = 4,
+) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var canExpand by rememberSaveable { mutableStateOf(false) }
 

@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.Flow
 const val UI_PAGE_SIZE = 25
 
 interface ExchangeRepository {
-
     fun observeExchanges(): Flow<List<Exchange>>
 
-    suspend fun loadPage(page: Int, pageSize: Int = UI_PAGE_SIZE): DomainResult<PageLoad>
+    suspend fun loadPage(
+        page: Int,
+        pageSize: Int = UI_PAGE_SIZE,
+    ): DomainResult<PageLoad>
 
     suspend fun refresh(): DomainResult<Unit>
 

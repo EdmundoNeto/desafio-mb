@@ -10,6 +10,9 @@ object TtlPolicy {
     val DETAIL = 24.hours
     val ASSETS = 5.minutes
 
-    fun isStale(updatedAt: Long, ttl: Duration, now: Long): Boolean =
-        now - updatedAt > ttl.inWholeMilliseconds
+    fun isStale(
+        updatedAt: Long,
+        ttl: Duration,
+        now: Long,
+    ): Boolean = now - updatedAt > ttl.inWholeMilliseconds
 }

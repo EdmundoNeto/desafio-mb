@@ -8,7 +8,6 @@ import br.com.edmundo.desafiomb.core.data.local.entity.ExchangeAssetEntity
 
 @Dao
 interface ExchangeAssetDao {
-
     @Query("SELECT * FROM exchange_asset WHERE exchangeId = :exchangeId ORDER BY currencyPriceUsd DESC")
     suspend fun getByExchangeId(exchangeId: Int): List<ExchangeAssetEntity>
 

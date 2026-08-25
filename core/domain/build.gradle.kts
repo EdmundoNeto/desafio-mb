@@ -1,6 +1,25 @@
 plugins {
     id("desafiomb.jvm.library")
     id("desafiomb.android.test")
+    alias(libs.plugins.kover)
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "br.com.edmundo.desafiomb.core.domain.di.DomainModuleKt",
+                    "br.com.edmundo.desafiomb.core.domain.util.Logger",
+                )
+            }
+        }
+        verify {
+            rule {
+                minBound(80)
+            }
+        }
+    }
 }
 
 dependencies {

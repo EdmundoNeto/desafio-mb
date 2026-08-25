@@ -14,13 +14,13 @@ import org.koin.dsl.module
 import org.koin.test.verify.verify
 
 class KoinModulesTest {
-
     @OptIn(KoinExperimentalAPI::class)
     @Test
     fun `dado o grafo completo, quando verificado, entao toda definicao resolve`() {
-        val combinedGraph = module {
-            includes(appModule, domainModule, networkModule, databaseModule, repositoryModule, exchangesModule)
-        }
+        val combinedGraph =
+            module {
+                includes(appModule, domainModule, networkModule, databaseModule, repositoryModule, exchangesModule)
+            }
 
         combinedGraph.verify(extraTypes = listOf(Context::class, SavedStateHandle::class))
     }

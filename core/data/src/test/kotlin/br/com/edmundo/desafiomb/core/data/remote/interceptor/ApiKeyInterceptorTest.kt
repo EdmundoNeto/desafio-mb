@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Test
 
 class ApiKeyInterceptorTest {
-
     private lateinit var server: MockWebServer
 
     @Before
@@ -28,9 +27,11 @@ class ApiKeyInterceptorTest {
     @Test
     fun `dado uma chamada, quando interceptada, entao adiciona o header X-CMC_PRO_API_KEY`() {
         server.enqueue(MockResponse().setResponseCode(200))
-        val client = OkHttpClient.Builder()
-            .addInterceptor(ApiKeyInterceptor(apiKey = "secret-key"))
-            .build()
+        val client =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(ApiKeyInterceptor(apiKey = "secret-key"))
+                .build()
 
         client.newCall(Request.Builder().url(server.url("/v1/exchange/map")).build()).execute()
 
@@ -41,9 +42,11 @@ class ApiKeyInterceptorTest {
     @Test
     fun `dado uma chamada, quando interceptada, entao a key nunca aparece na query string`() {
         server.enqueue(MockResponse().setResponseCode(200))
-        val client = OkHttpClient.Builder()
-            .addInterceptor(ApiKeyInterceptor(apiKey = "secret-key"))
-            .build()
+        val client =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(ApiKeyInterceptor(apiKey = "secret-key"))
+                .build()
 
         client.newCall(Request.Builder().url(server.url("/v1/exchange/map")).build()).execute()
 

@@ -10,11 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import br.com.edmundo.desafiomb.core.ui.theme.Spacing
 import coil3.compose.AsyncImage
 
 @Composable
-fun RemoteImage(url: String?, contentDescription: String, modifier: Modifier = Modifier, size: Dp = 48.dp) {
+fun RemoteImage(
+    url: String?,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    size: Dp = Spacing.avatarMedium,
+) {
     if (url == null) {
         Surface(modifier = modifier.size(size), color = MaterialTheme.colorScheme.surfaceVariant) {
             Icon(imageVector = Icons.Default.CurrencyExchange, contentDescription = contentDescription)

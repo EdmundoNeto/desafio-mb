@@ -1,12 +1,11 @@
 package br.com.edmundo.desafiomb.feature.exchanges.format
 
-import java.time.Instant
-import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.Instant
+import java.util.Locale
 
 class FormattersTest {
-
     private val ptBr = Locale.of("pt", "BR")
 
     @Test
@@ -27,6 +26,26 @@ class FormattersTest {
     @Test
     fun `dado 842, quando formatado como volume, entao retorna US dolar 842,00`() {
         assertEquals("US$ 842,00", VolumeFormatter.format(842.0, ptBr))
+    }
+
+    @Test
+    fun `dado 999995000, quando formatado como volume, entao sobe de escala para US dolar 1,00 bi`() {
+        assertEquals("US$ 1,00 bi", VolumeFormatter.format(999_995_000.0, ptBr))
+    }
+
+    @Test
+    fun `dado 999995, quando formatado como volume, entao sobe de escala para US dolar 1,00 mi`() {
+        assertEquals("US$ 1,00 mi", VolumeFormatter.format(999_995.0, ptBr))
+    }
+
+    @Test
+    fun `dado 999,995, quando formatado como volume, entao sobe de escala para US dolar 1,00 mil`() {
+        assertEquals("US$ 1,00 mil", VolumeFormatter.format(999.995, ptBr))
+    }
+
+    @Test
+    fun `dado um valor negativo, quando formatado como volume, entao mantem o sinal e o sufixo de escala`() {
+        assertEquals("US$ -5,00 mi", VolumeFormatter.format(-5_000_000.0, ptBr))
     }
 
     @Test

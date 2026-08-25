@@ -16,37 +16,41 @@ import br.com.edmundo.desafiomb.feature.exchanges.model.ExchangeDetailUiModel
 import br.com.edmundo.desafiomb.feature.exchanges.model.ExchangeUiModel
 import java.util.Locale
 
-fun Exchange.toUiModel(locale: Locale = Locale.getDefault()): ExchangeUiModel = ExchangeUiModel(
-    id = id,
-    name = name,
-    logoUrl = logoUrl,
-    volume = VolumeFormatter.format(spotVolumeUsd, locale),
-    launchedAt = DateFormatter.format(dateLaunched, locale),
-)
+fun Exchange.toUiModel(locale: Locale = Locale.getDefault()): ExchangeUiModel =
+    ExchangeUiModel(
+        id = id,
+        name = name,
+        logoUrl = logoUrl,
+        volume = VolumeFormatter.format(spotVolumeUsd, locale),
+        launchedAt = DateFormatter.format(dateLaunched, locale),
+    )
 
-fun ExchangeDetail.toUiModel(locale: Locale = Locale.getDefault()): ExchangeDetailUiModel = ExchangeDetailUiModel(
-    id = id,
-    name = name,
-    logoUrl = logoUrl,
-    description = description,
-    websiteUrl = websiteUrl,
-    makerFee = PercentFormatter.format(makerFee, locale),
-    takerFee = PercentFormatter.format(takerFee, locale),
-    launchedAt = DateFormatter.format(dateLaunched, locale),
-)
+fun ExchangeDetail.toUiModel(locale: Locale = Locale.getDefault()): ExchangeDetailUiModel =
+    ExchangeDetailUiModel(
+        id = id,
+        name = name,
+        logoUrl = logoUrl,
+        description = description,
+        websiteUrl = websiteUrl,
+        makerFee = PercentFormatter.format(makerFee, locale),
+        takerFee = PercentFormatter.format(takerFee, locale),
+        launchedAt = DateFormatter.format(dateLaunched, locale),
+    )
 
-fun ExchangeAsset.toUiModel(locale: Locale = Locale.getDefault()): ExchangeAssetUiModel = ExchangeAssetUiModel(
-    currencyName = currencyName,
-    priceUsd = PriceFormatter.format(currencyPriceUsd, locale),
-)
+fun ExchangeAsset.toUiModel(locale: Locale = Locale.getDefault()): ExchangeAssetUiModel =
+    ExchangeAssetUiModel(
+        currencyName = currencyName,
+        priceUsd = PriceFormatter.format(currencyPriceUsd, locale),
+    )
 
-fun AppError.toUiError(): UiError = when (this) {
-    AppError.NoConnection -> UiError(UiText.Resource(R.string.error_no_connection), isRetryable = true)
-    AppError.Timeout -> UiError(UiText.Resource(R.string.error_timeout), isRetryable = true)
-    AppError.InvalidApiKey -> UiError(UiText.Resource(R.string.error_invalid_api_key), isRetryable = false)
-    AppError.PlanNotAuthorized -> UiError(UiText.Resource(R.string.error_plan_not_authorized), isRetryable = false)
-    is AppError.RateLimited -> UiError(UiText.Resource(R.string.error_rate_limited), isRetryable = true)
-    AppError.Server -> UiError(UiText.Resource(R.string.error_server), isRetryable = true)
-    AppError.Serialization -> UiError(UiText.Resource(R.string.error_serialization), isRetryable = false)
-    is AppError.Unknown -> UiError(UiText.Resource(R.string.error_unknown), isRetryable = true)
-}
+fun AppError.toUiError(): UiError =
+    when (this) {
+        AppError.NoConnection -> UiError(UiText.Resource(R.string.error_no_connection), isRetryable = true)
+        AppError.Timeout -> UiError(UiText.Resource(R.string.error_timeout), isRetryable = true)
+        AppError.InvalidApiKey -> UiError(UiText.Resource(R.string.error_invalid_api_key), isRetryable = false)
+        AppError.PlanNotAuthorized -> UiError(UiText.Resource(R.string.error_plan_not_authorized), isRetryable = false)
+        is AppError.RateLimited -> UiError(UiText.Resource(R.string.error_rate_limited), isRetryable = true)
+        AppError.Server -> UiError(UiText.Resource(R.string.error_server), isRetryable = true)
+        AppError.Serialization -> UiError(UiText.Resource(R.string.error_serialization), isRetryable = false)
+        is AppError.Unknown -> UiError(UiText.Resource(R.string.error_unknown), isRetryable = true)
+    }

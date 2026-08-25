@@ -11,22 +11,23 @@ import org.koin.dsl.module
 
 const val IO_DISPATCHER = "IoDispatcher"
 
-val repositoryModule = module {
-    single<CoroutineDispatcher>(named(IO_DISPATCHER)) { Dispatchers.IO }
+val repositoryModule =
+    module {
+        single<CoroutineDispatcher>(named(IO_DISPATCHER)) { Dispatchers.IO }
 
-    single<TimeProvider> { SystemTimeProvider() }
+        single<TimeProvider> { SystemTimeProvider() }
 
-    single<ExchangeRepository> {
-        ExchangeRepositoryImpl(
-            api = get(),
-            db = get(),
-            indexDao = get(),
-            exchangeDao = get(),
-            detailDao = get(),
-            assetDao = get(),
-            cacheMetaDao = get(),
-            timeProvider = get(),
-            ioDispatcher = get(named(IO_DISPATCHER)),
-        )
+        single<ExchangeRepository> {
+            ExchangeRepositoryImpl(
+                api = get(),
+                db = get(),
+                indexDao = get(),
+                exchangeDao = get(),
+                detailDao = get(),
+                assetDao = get(),
+                cacheMetaDao = get(),
+                timeProvider = get(),
+                ioDispatcher = get(named(IO_DISPATCHER)),
+            )
+        }
     }
-}

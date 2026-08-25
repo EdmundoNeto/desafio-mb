@@ -10,7 +10,6 @@ import retrofit2.http.Query
 const val MAP_LIMIT = 5000
 
 interface CmcExchangeApi {
-
     @GET("v1/exchange/map")
     suspend fun getExchangeMap(
         @Query("sort") sort: String = "volume_24h",

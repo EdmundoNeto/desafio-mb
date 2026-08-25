@@ -8,7 +8,6 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 class TtlPolicyTest {
-
     @Test
     fun `dado updatedAt dentro do TTL, quando isStale, entao retorna false`() {
         val now = 100_000L

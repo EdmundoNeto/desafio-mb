@@ -15,22 +15,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import br.com.edmundo.desafiomb.core.ui.R
 import br.com.edmundo.desafiomb.core.ui.testing.TestTags
+import br.com.edmundo.desafiomb.core.ui.theme.Spacing
 
 @Composable
-fun ErrorState(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+fun ErrorState(
+    message: String,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(TestTags.FULL_SCREEN_ERROR)
-            .padding(24.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .testTag(TestTags.FULL_SCREEN_ERROR)
+                .padding(Spacing.xl),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(text = message, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.md))
         Button(onClick = onRetry, modifier = Modifier.testTag(TestTags.RETRY_BUTTON)) {
             Text(text = stringResource(R.string.action_retry))
         }
