@@ -1,0 +1,4 @@
+# Copie para local.properties e preencha com sua chave da CoinMarketCap.
+# O build NAO falha com a chave vazia (spec Sec. 2.3 / RNF-10) - a ausencia e
+# detectada em runtime e mapeada para AppError.InvalidApiKey (CA-07, CA-10).
+CMC_API_KEY=

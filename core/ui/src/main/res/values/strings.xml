@@ -1,0 +1,16 @@
+<resources>
+    <string name="error_no_connection">Sem conexão com a internet</string>
+    <string name="error_timeout">A conexão demorou demais para responder</string>
+    <string name="error_invalid_api_key">Chave de API inválida ou ausente</string>
+    <string name="error_plan_not_authorized">Seu plano não autoriza esta operação</string>
+    <string name="error_rate_limited">Muitas requisições em pouco tempo. Tente novamente em instantes</string>
+    <string name="error_server">O servidor está indisponível no momento</string>
+    <string name="error_serialization">Não foi possível interpretar a resposta do servidor</string>
+    <string name="error_unknown">Algo deu errado</string>
+    <string name="action_retry">Tentar novamente</string>
+    <string name="offline_banner_message">Exibindo dados offline</string>
+    <string name="action_show_more">Ver mais</string>
+    <string name="action_show_less">Ver menos</string>
+    <string name="action_back">Voltar</string>
+    <string name="action_refresh">Atualizar</string>
+</resources>
