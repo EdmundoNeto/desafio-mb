@@ -2,6 +2,7 @@ package br.com.edmundo.desafiomb.core.data.di
 
 import br.com.edmundo.desafiomb.core.data.BuildConfig
 import br.com.edmundo.desafiomb.core.data.remote.CmcExchangeApi
+import br.com.edmundo.desafiomb.core.data.remote.HttpHeaders
 import br.com.edmundo.desafiomb.core.data.remote.cmcJson
 import br.com.edmundo.desafiomb.core.data.remote.interceptor.ApiKeyInterceptor
 import br.com.edmundo.desafiomb.core.data.remote.interceptor.RateLimitInterceptor
@@ -35,7 +36,7 @@ val networkModule =
                         addInterceptor(
                             HttpLoggingInterceptor().apply {
                                 level = HttpLoggingInterceptor.Level.BODY
-                                redactHeader("X-CMC_PRO_API_KEY")
+                                redactHeader(HttpHeaders.API_KEY)
                             },
                         )
                     }

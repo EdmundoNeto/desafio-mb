@@ -1,6 +1,6 @@
 package br.com.edmundo.desafiomb.core.data.remote.interceptor
 
-import br.com.edmundo.desafiomb.core.data.remote.HEADER_RETRY_AFTER
+import br.com.edmundo.desafiomb.core.data.remote.HttpHeaders
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -36,7 +36,7 @@ class RetryInterceptor(
 
             if (!shouldRetry(response.code) || attempt >= maxAttempts) return response
 
-            val retryAfter = response.header(HEADER_RETRY_AFTER)
+            val retryAfter = response.header(HttpHeaders.RETRY_AFTER)
             response.close()
             sleep(backoffMillis(attempt, retryAfter))
             attempt++

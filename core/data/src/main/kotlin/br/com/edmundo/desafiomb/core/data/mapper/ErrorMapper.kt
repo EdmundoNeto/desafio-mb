@@ -1,6 +1,6 @@
 package br.com.edmundo.desafiomb.core.data.mapper
 
-import br.com.edmundo.desafiomb.core.data.remote.HEADER_RETRY_AFTER
+import br.com.edmundo.desafiomb.core.data.remote.HttpHeaders
 import br.com.edmundo.desafiomb.core.data.remote.dto.CmcStatus
 import br.com.edmundo.desafiomb.core.domain.error.AppError
 import kotlinx.serialization.SerializationException
@@ -42,7 +42,7 @@ private fun mapHttpException(exception: HttpException): AppError =
     when (exception.code()) {
         HttpURLConnection.HTTP_UNAUTHORIZED -> AppError.InvalidApiKey
         HttpURLConnection.HTTP_FORBIDDEN -> AppError.PlanNotAuthorized
-        HTTP_TOO_MANY_REQUESTS -> AppError.RateLimited(parseRetryAfter(exception.response()?.headers()?.get(HEADER_RETRY_AFTER)))
+        HTTP_TOO_MANY_REQUESTS -> AppError.RateLimited(parseRetryAfter(exception.response()?.headers()?.get(HttpHeaders.RETRY_AFTER)))
         in httpServerErrorRange -> AppError.Server
         else -> AppError.Unknown(exception)
     }

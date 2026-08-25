@@ -1,5 +1,6 @@
 package br.com.edmundo.desafiomb.core.data.remote.interceptor
 
+import br.com.edmundo.desafiomb.core.data.remote.HttpHeaders
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -11,7 +12,7 @@ class ApiKeyInterceptor(
             chain
                 .request()
                 .newBuilder()
-                .addHeader("X-CMC_PRO_API_KEY", apiKey)
+                .addHeader(HttpHeaders.API_KEY, apiKey)
                 .build()
         return chain.proceed(request)
     }
