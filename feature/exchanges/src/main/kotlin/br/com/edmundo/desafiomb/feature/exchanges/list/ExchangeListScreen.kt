@@ -9,9 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,12 +32,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.edmundo.desafiomb.core.ui.component.AppTopBar
 import br.com.edmundo.desafiomb.core.ui.component.EmptyState
 import br.com.edmundo.desafiomb.core.ui.component.ErrorState
 import br.com.edmundo.desafiomb.core.ui.component.LoadingSkeleton
 import br.com.edmundo.desafiomb.core.ui.component.OfflineBanner
+import br.com.edmundo.desafiomb.core.ui.component.RankBadge
 import br.com.edmundo.desafiomb.core.ui.component.RemoteImage
 import br.com.edmundo.desafiomb.core.ui.testing.TestTags
 import br.com.edmundo.desafiomb.core.ui.text.asString
@@ -117,8 +126,15 @@ private fun ExchangeListContent(
             if (state.isStale) {
                 OfflineBanner(message = stringResource(br.com.edmundo.desafiomb.core.ui.R.string.offline_banner_message))
             }
-            LazyColumn(state = listState, modifier = Modifier.fillMaxSize().testTag(TestTags.EXCHANGE_LIST)) {
-                items(state.items, key = { it.id }) { item -> ExchangeRow(item, onExchangeClick) }
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize().testTag(TestTags.EXCHANGE_LIST),
+                contentPadding = PaddingValues(horizontal = Spacing.md, vertical = Spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+            ) {
+                itemsIndexed(state.items, key = { _, item -> item.id }) { index, item ->
+                    ExchangeRow(rank = index + 1, item = item, onExchangeClick = onExchangeClick)
+                }
 
                 item {
                     when (state.appendState) {
@@ -138,14 +154,23 @@ private fun ExchangeListContent(
                                         .clickable { onRetryAppend() },
                                 horizontalArrangement = Arrangement.Center,
                             ) {
-                                Text(text = stringResource(R.string.exchange_list_append_error))
+                                Text(
+                                    text = stringResource(R.string.exchange_list_append_error),
+                                    color = MaterialTheme.colorScheme.error,
+                                )
                             }
 
                         AppendState.EndReached ->
                             Row(
                                 modifier = Modifier.fillMaxWidth().padding(Spacing.md),
                                 horizontalArrangement = Arrangement.Center,
-                            ) { Text(text = stringResource(R.string.exchange_list_end_of_list)) }
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.exchange_list_end_of_list),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
 
                         AppendState.Idle -> Unit
                     }
@@ -157,29 +182,51 @@ private fun ExchangeListContent(
 
 @Composable
 private fun ExchangeRow(
+    rank: Int,
     item: ExchangeUiModel,
     onExchangeClick: (Int) -> Unit,
 ) {
-    Row(
+    Card(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .testTag(TestTags.exchangeListItem(item.id))
                 .clickable { onExchangeClick(item.id) }
-                .semantics(mergeDescendants = true) {}
-                .padding(Spacing.md),
-        verticalAlignment = Alignment.CenterVertically,
+                .semantics(mergeDescendants = true) {},
+        shape = RoundedCornerShape(Spacing.lg),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        elevation = CardDefaults.cardElevation(defaultElevation = Spacing.xs),
     ) {
-        RemoteImage(
-            url = item.logoUrl,
-            contentDescription = stringResource(R.string.exchange_logo_content_description, item.name),
-        )
-        Column(modifier = Modifier.padding(start = Spacing.md)) {
-            Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-            Text(text = item.volume, style = MaterialTheme.typography.bodyLarge)
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(Spacing.md),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RankBadge(text = rank.toString())
+            RemoteImage(
+                url = item.logoUrl,
+                contentDescription = stringResource(R.string.exchange_logo_content_description, item.name),
+                modifier = Modifier.padding(start = Spacing.sm),
+            )
+            Column(modifier = Modifier.padding(start = Spacing.md).weight(1f)) {
+                Text(text = item.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = stringResource(R.string.exchange_launched_at, item.launchedAt),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Text(
-                text = stringResource(R.string.exchange_launched_at, item.launchedAt),
-                style = MaterialTheme.typography.bodySmall,
+                text = item.volume,
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = Spacing.xs),
             )
         }
     }
