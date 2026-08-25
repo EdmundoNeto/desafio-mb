@@ -6,11 +6,32 @@ Kotlin · Jetpack Compose · Clean Architecture multi-módulo · offline-first.
 
 ## Sumário
 
+- [Screenshots](#screenshots)
 - [Arquitetura](#arquitetura)
 - [Módulos](#módulos)
 - [Stack técnica](#stack-técnica)
 - [Como rodar](#como-rodar)
 - [Qualidade e testes](#qualidade-e-testes)
+
+## Screenshots
+
+<table>
+<tr>
+<td align="center"><b>Listagem</b><br><img src="docs/screenshots/home-screen.png" width="220"/></td>
+<td align="center"><b>Listagem — loading</b><br><img src="docs/screenshots/home-screen-loading.png" width="220"/></td>
+<td align="center"><b>Sem conexão</b><br><img src="docs/screenshots/no-connection-screen.png" width="220"/></td>
+</tr>
+<tr>
+<td align="center"><b>Detalhe — expandido</b><br><img src="docs/screenshots/detail-screen-expanded.png" width="220"/></td>
+<td align="center"><b>Detalhe — recolhido</b><br><img src="docs/screenshots/detail-screen-collapsed.png" width="220"/></td>
+<td align="center"><b>Detalhe — loading</b><br><img src="docs/screenshots/detail-screen-loading.png" width="220"/></td>
+</tr>
+<tr>
+<td align="center"><b>Detalhe — sem conexão</b><br><img src="docs/screenshots/detail-screen-noconnection.png" width="220"/></td>
+<td></td>
+<td></td>
+</tr>
+</table>
 
 ## Arquitetura
 
