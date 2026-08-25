@@ -18,6 +18,8 @@ object VolumeFormatter {
         UNIT(BigDecimal.ZERO, BigDecimal.ONE, null),
     }
 
+    private val SCALE_CARRY_THRESHOLD = BigDecimal("1000")
+
     fun format(
         value: Double?,
         locale: Locale = Locale.getDefault(),
@@ -35,7 +37,7 @@ object VolumeFormatter {
         val divided = amount.divide(scale.divisor, 2, RoundingMode.HALF_UP)
 
         val biggerScale = Scale.entries.getOrNull(scale.ordinal - 1)
-        return if (biggerScale != null && divided.abs() >= BigDecimal(1000)) {
+        return if (biggerScale != null && divided.abs() >= SCALE_CARRY_THRESHOLD) {
             amount.divide(biggerScale.divisor, 2, RoundingMode.HALF_UP) to biggerScale.suffix
         } else {
             divided to scale.suffix

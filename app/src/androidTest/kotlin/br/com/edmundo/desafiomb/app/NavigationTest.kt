@@ -9,7 +9,6 @@ import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.navigation.toRoute
 import androidx.test.platform.app.InstrumentationRegistry
-import br.com.edmundo.desafiomb.app.di.appModule
 import br.com.edmundo.desafiomb.app.navigation.CmcNavHost
 import br.com.edmundo.desafiomb.core.domain.di.domainModule
 import br.com.edmundo.desafiomb.core.domain.model.PageLoad
@@ -32,7 +31,7 @@ class NavigationTest : KoinTest {
     @get:Rule
     val koinTestRule =
         KoinTestRule.create {
-            modules(appModule, domainModule, exchangesModule, fakeRepositoryModule)
+            modules(domainModule, exchangesModule, fakeRepositoryModule)
         }
 
     @get:Rule

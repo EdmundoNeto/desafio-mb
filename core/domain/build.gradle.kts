@@ -10,7 +10,6 @@ kover {
             excludes {
                 classes(
                     "br.com.edmundo.desafiomb.core.domain.di.DomainModuleKt",
-                    "br.com.edmundo.desafiomb.core.domain.util.Logger",
                 )
             }
         }

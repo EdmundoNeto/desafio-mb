@@ -14,15 +14,13 @@ object PriceFormatter {
         locale: Locale = Locale.getDefault(),
     ): String {
         if (value == null) return MISSING_VALUE_PLACEHOLDER
-        val symbols = DecimalFormatSymbols.getInstance(locale)
         return if (value >= 1.0) {
+            val symbols = DecimalFormatSymbols.getInstance(locale)
             "US$ ${DecimalFormat("#,##0.00", symbols).format(value)}"
         } else {
-            val rounded = BigDecimal.valueOf(value).round(MathContext(SIGNIFICANT_DIGITS)).stripTrailingZeros()
+            val rounded = BigDecimal.valueOf(value).round(MathContext(SIGNIFICANT_DIGITS))
             val magnitude = if (rounded.compareTo(BigDecimal.ZERO) == 0) BigDecimal.ZERO else rounded
-            val plain = magnitude.toPlainString()
-            val localized = if (symbols.decimalSeparator != '.') plain.replace('.', symbols.decimalSeparator) else plain
-            "US$ $localized"
+            "US$ ${magnitude.toLocalizedPlainString(locale)}"
         }
     }
 }

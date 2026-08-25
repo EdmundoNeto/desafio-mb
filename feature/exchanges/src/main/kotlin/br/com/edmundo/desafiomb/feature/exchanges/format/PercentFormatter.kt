@@ -2,7 +2,6 @@ package br.com.edmundo.desafiomb.feature.exchanges.format
 
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 private const val PERCENT_SCALE = 3
@@ -13,11 +12,8 @@ object PercentFormatter {
         locale: Locale = Locale.getDefault(),
     ): String {
         if (value == null) return MISSING_VALUE_PLACEHOLDER
-        val rounded = BigDecimal(value).setScale(PERCENT_SCALE, RoundingMode.HALF_UP)
+        val rounded = BigDecimal.valueOf(value).setScale(PERCENT_SCALE, RoundingMode.HALF_UP)
         if (rounded.compareTo(BigDecimal.ZERO) == 0) return "0%"
-        val symbols = DecimalFormatSymbols.getInstance(locale)
-        val plain = rounded.stripTrailingZeros().toPlainString()
-        val localized = if (symbols.decimalSeparator != '.') plain.replace('.', symbols.decimalSeparator) else plain
-        return "$localized%"
+        return "${rounded.toLocalizedPlainString(locale)}%"
     }
 }

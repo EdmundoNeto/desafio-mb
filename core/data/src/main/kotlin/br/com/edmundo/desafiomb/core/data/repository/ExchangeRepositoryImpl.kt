@@ -8,6 +8,7 @@ import br.com.edmundo.desafiomb.core.data.local.dao.ExchangeDao
 import br.com.edmundo.desafiomb.core.data.local.dao.ExchangeDetailDao
 import br.com.edmundo.desafiomb.core.data.local.dao.ExchangeIndexDao
 import br.com.edmundo.desafiomb.core.data.local.entity.CacheMetaEntity
+import br.com.edmundo.desafiomb.core.data.local.entity.ExchangeEntity
 import br.com.edmundo.desafiomb.core.data.local.entity.assetsSyncKey
 import br.com.edmundo.desafiomb.core.data.mapper.toDetailEntity
 import br.com.edmundo.desafiomb.core.data.mapper.toDomain
@@ -62,49 +63,64 @@ class ExchangeRepositoryImpl(
             if (indexResult is DomainResult.Failure) return@withContext DomainResult.failure(indexResult.error)
 
             val offset = page * pageSize
-            val ids = indexDao.idsForRange(offset, pageSize)
-            if (ids.isEmpty()) {
+            val pageIds = indexDao.idsForRange(offset, pageSize)
+            if (pageIds.isEmpty()) {
                 return@withContext DomainResult.success(PageLoad.Fresh(hasMore = false))
             }
 
             val now = timeProvider.now()
-            val existing = exchangeDao.getByIds(ids).associateBy { it.id }
-            val missing =
-                ids.filter { id ->
-                    val entity = existing[id]
-                    entity == null || TtlPolicy.isStale(entity.updatedAt, TtlPolicy.LIST, now)
-                }
+            val cachedByPageId = exchangeDao.getByIds(pageIds).associateBy { it.id }
+            val hasMore = hasMore(offset, pageSize)
 
-            if (missing.isEmpty()) {
-                return@withContext DomainResult.success(PageLoad.Fresh(hasMore = hasMore(offset, pageSize)))
+            if (isPageFresh(pageIds, cachedByPageId, now)) {
+                return@withContext DomainResult.success(PageLoad.Fresh(hasMore))
             }
 
-            val blockStart = (offset / INFO_BLOCK_SIZE) * INFO_BLOCK_SIZE
-            val blockIds = indexDao.idsForRange(blockStart, INFO_BLOCK_SIZE)
+            refreshInfoBlock(offset, pageIds, cachedByPageId, now, hasMore)
+        }
 
-            val infoResult =
-                safeApiCall(
-                    call = { api.getExchangeInfo(ids = blockIds.joinToString(",")) },
-                    transform = { data -> data.values.toList() },
-                )
+    private fun isPageFresh(
+        pageIds: List<Int>,
+        cachedByPageId: Map<Int, ExchangeEntity>,
+        now: Long,
+    ): Boolean =
+        pageIds.none { id ->
+            val entity = cachedByPageId[id]
+            entity == null || TtlPolicy.isStale(entity.updatedAt, TtlPolicy.LIST, now)
+        }
 
-            when (infoResult) {
-                is DomainResult.Success -> {
-                    val entities = infoResult.value.map { it.toExchangeEntity(now) }
-                    exchangeDao.upsertAll(entities)
-                    DomainResult.success(PageLoad.Fresh(hasMore = hasMore(offset, pageSize)))
-                }
+    private suspend fun refreshInfoBlock(
+        offset: Int,
+        pageIds: List<Int>,
+        cachedByPageId: Map<Int, ExchangeEntity>,
+        now: Long,
+        hasMore: Boolean,
+    ): DomainResult<PageLoad> {
+        val blockStart = (offset / INFO_BLOCK_SIZE) * INFO_BLOCK_SIZE
+        val blockIds = indexDao.idsForRange(blockStart, INFO_BLOCK_SIZE)
 
-                is DomainResult.Failure -> {
-                    val hasCacheForPage = ids.any { existing.containsKey(it) }
-                    if (hasCacheForPage) {
-                        DomainResult.success(PageLoad.Cached(hasMore = hasMore(offset, pageSize), error = infoResult.error))
-                    } else {
-                        DomainResult.failure(infoResult.error)
-                    }
+        val infoResult =
+            safeApiCall(
+                call = { api.getExchangeInfo(ids = blockIds.joinToString(",")) },
+                transform = { data -> data.values.toList() },
+            )
+
+        return when (infoResult) {
+            is DomainResult.Success -> {
+                exchangeDao.upsertAll(infoResult.value.map { it.toExchangeEntity(now) })
+                DomainResult.success(PageLoad.Fresh(hasMore))
+            }
+
+            is DomainResult.Failure -> {
+                val hasCacheForPage = pageIds.any { cachedByPageId.containsKey(it) }
+                if (hasCacheForPage) {
+                    DomainResult.success(PageLoad.Cached(hasMore, infoResult.error))
+                } else {
+                    DomainResult.failure(infoResult.error)
                 }
             }
         }
+    }
 
     private suspend fun hasMore(
         offset: Int,

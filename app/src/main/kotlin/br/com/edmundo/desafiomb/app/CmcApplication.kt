@@ -1,7 +1,6 @@
 package br.com.edmundo.desafiomb.app
 
 import android.app.Application
-import br.com.edmundo.desafiomb.app.di.appModule
 import br.com.edmundo.desafiomb.core.data.di.databaseModule
 import br.com.edmundo.desafiomb.core.data.di.networkModule
 import br.com.edmundo.desafiomb.core.data.di.repositoryModule
@@ -19,7 +18,6 @@ class CmcApplication : Application() {
             androidContext(this@CmcApplication)
             if (BuildConfig.DEBUG) androidLogger(Level.ERROR)
             modules(
-                appModule,
                 domainModule,
                 networkModule,
                 databaseModule,
