@@ -99,8 +99,6 @@ app ──────────────► feature:exchanges ──► co
 | `feature:exchanges` | Telas de listagem e detalhe (Compose + ViewModel), mapeamento domínio → UI, formatação (moeda, data, percentual), rotas de navegação type-safe. | `core:domain`, `core:ui` |
 | `build-logic/convention` | Convention plugins Gradle (`desafiomb.android.*`, `desafiomb.jvm.library`) que centralizam config de compileSdk/jvmTarget, Compose, ktlint/detekt e testes para todos os módulos. | — |
 
-Cada módulo tem um `AGENT_*.md` próprio com árvore de arquivos completa, classes principais, fluxos ponta a ponta e decisões não óbvias — ver [Documentação por módulo](#documentação-por-módulo).
-
 ### Padrões principais
 
 - **Offline-first com TTL por tipo de dado** — índice (15min), listagem (5min), detalhe (24h), ativos (5min). Uma falha de rede com cache disponível degrada silenciosamente para o dado salvo em vez de quebrar a tela (`PageLoad.Cached`).

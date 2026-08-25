@@ -8,17 +8,14 @@ import java.util.Locale
 
 object VolumeFormatter {
     private enum class Scale(
-        val floor: BigDecimal,
         val divisor: BigDecimal,
         val suffix: String?,
     ) {
-        BILLION(BigDecimal("1000000000"), BigDecimal("1000000000"), "bi"),
-        MILLION(BigDecimal("1000000"), BigDecimal("1000000"), "mi"),
-        THOUSAND(BigDecimal("1000"), BigDecimal("1000"), "mil"),
-        UNIT(BigDecimal.ZERO, BigDecimal.ONE, null),
+        BILLION(VOLUME_BILLION_DIVISOR, VOLUME_BILLION_SUFFIX),
+        MILLION(VOLUME_MILLION_DIVISOR, VOLUME_MILLION_SUFFIX),
+        THOUSAND(VOLUME_THOUSAND_DIVISOR, VOLUME_THOUSAND_SUFFIX),
+        UNIT(BigDecimal.ONE, null),
     }
-
-    private val SCALE_CARRY_THRESHOLD = BigDecimal("1000")
 
     fun format(
         value: Double?,
@@ -26,21 +23,21 @@ object VolumeFormatter {
     ): String {
         if (value == null || value == 0.0) return MISSING_VALUE_PLACEHOLDER
 
-        val (scaledAmount, suffix) = resolveScale(BigDecimal.valueOf(value))
-        val formatted = DecimalFormat("0.00", DecimalFormatSymbols.getInstance(locale)).format(scaledAmount)
-        return if (suffix == null) "US$ $formatted" else "US$ $formatted $suffix"
+        val (scaledValue, scaleSuffix) = resolveScale(BigDecimal.valueOf(value))
+        val formattedValue = DecimalFormat(VOLUME_DECIMAL_PATTERN, DecimalFormatSymbols.getInstance(locale)).format(scaledValue)
+        return if (scaleSuffix == null) "$USD_PREFIX$formattedValue" else "$USD_PREFIX$formattedValue $scaleSuffix"
     }
 
     private fun resolveScale(amount: BigDecimal): Pair<BigDecimal, String?> {
         val magnitude = amount.abs()
-        val scale = Scale.entries.first { magnitude >= it.floor }
-        val divided = amount.divide(scale.divisor, 2, RoundingMode.HALF_UP)
+        val matchedScale = Scale.entries.firstOrNull { magnitude >= it.divisor } ?: Scale.UNIT
+        val scaledValue = amount.divide(matchedScale.divisor, 2, RoundingMode.HALF_UP)
 
-        val biggerScale = Scale.entries.getOrNull(scale.ordinal - 1)
-        return if (biggerScale != null && divided.abs() >= SCALE_CARRY_THRESHOLD) {
-            amount.divide(biggerScale.divisor, 2, RoundingMode.HALF_UP) to biggerScale.suffix
+        val nextLargerScale = Scale.entries.getOrNull(matchedScale.ordinal - 1)
+        return if (nextLargerScale != null && scaledValue.abs() >= VOLUME_PROMOTION_THRESHOLD) {
+            amount.divide(nextLargerScale.divisor, 2, RoundingMode.HALF_UP) to nextLargerScale.suffix
         } else {
-            divided to scale.suffix
+            scaledValue to matchedScale.suffix
         }
     }
 }
